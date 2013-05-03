@@ -54,4 +54,9 @@ def generate_system(name=None):
     system['facts']['uname.nodename'] = name
     system['facts']['virt.uuid'] = uuid
 
+    for key in system['facts']:
+        if type(system['facts'][key]) == list:
+			elem = random.randrange(0, len(system['facts'][key]), 1)
+			system['facts'][key] = system['facts'][key][elem]
+
     return system
