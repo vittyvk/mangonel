@@ -31,7 +31,7 @@
      "dmi.memory.location": "Other",
      "dmi.memory.locator": "DIMM 0",
      "dmi.memory.maximum_capacity": "2 GB",
-     "dmi.memory.size": ["1024 MB","2048 MB","4096 MB","8192 MB"],
+     "dmi.memory.size": {"array" : ["1024 MB","2048 MB","4096 MB","8192 MB"] },
      "dmi.memory.speed": "  (ns)",
      "dmi.memory.total_width": "64 bit",
      "dmi.memory.type": "RAM",

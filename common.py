@@ -55,8 +55,9 @@ def generate_system(name=None):
     system['facts']['virt.uuid'] = uuid
 
     for key in system['facts']:
-        if type(system['facts'][key]) == list:
-			elem = random.randrange(0, len(system['facts'][key]), 1)
-			system['facts'][key] = system['facts'][key][elem]
+        if type(system['facts'][key]) == dict:
+			if system['facts'][key].keys()[0] == 'array':
+				elem = random.randrange(0, len(system['facts'][key]['array']), 1)
+				system['facts'][key] = system['facts'][key]['array'][elem]
 
     return system
