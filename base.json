@@ -77,14 +77,14 @@
      "memory.swaptotal": "2064376",
      "net.interface.eth1.broadcast": "10.10.169.255",
      "net.interface.eth1.hwaddr": "52:54:00:b5:30:24",
-     "net.interface.eth1.ipaddr": "None",
+     "net.interface.eth1.ipaddr": {"ipaddr": ""},
      "net.interface.eth1.netmask": "255.255.254.0",
      "net.interface.lo.broadcast": "0.0.0.0",
      "net.interface.lo.hwaddr": "00:00:00:00:00:00",
      "net.interface.lo.ipaddr": "127.0.0.1",
      "net.interface.lo.netmask": "255.0.0.0",
      "network.hostname": "None",
-     "network.ipaddr": "None",
+     "network.ipaddr": {"copy": "net.interface.eth1.ipaddr"},
      "system.entitlements_valid": "false",
      "uname.machine": "x86_64",
      "uname.nodename": "None",
@@ -93,5 +93,5 @@
      "uname.version": "#1 SMP Wed Nov 9 08:03:13 EST 2011",
      "virt.host_type": "kvm",
      "virt.is_guest": "true",
-     "virt.uuid": "None"
+     "virt.uuid": {"copy": "dmi.system.uuid"}
     }

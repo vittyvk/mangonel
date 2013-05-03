@@ -12,7 +12,7 @@ def generate_uuid():
     return uuid_obj.urn.split(":")[-1]
 
 
-def random_name(min=4, max=8):
+def generate_name(min=4, max=8):
 
     if min <= 0:
         min = 4
@@ -25,7 +25,7 @@ def random_name(min=4, max=8):
     return str().join(r.choice(pool) for x in range(random.randint(min, max)))
 
 
-def random_ipaddr():
+def generate_ipaddr():
 
     ipaddr = ".".join(str(random.randrange(0, 255, 1)) for x in range(4))
 
@@ -34,10 +34,10 @@ def random_ipaddr():
 def generate_system(name=None):
 
     if name is None:
-        name = "%s.example.com" % random_name()
+        name = "%s.example.com" % generate_name()
 
     uuid = generate_uuid()
-    ipaddr = random_ipaddr()
+    ipaddr = generate_ipaddr()
     
     system = {
         'name'            : name,
@@ -48,18 +48,32 @@ def generate_system(name=None):
         }
 
     #system['facts']['dmi.system.uuid'] = uuid
-    system['facts']['net.interface.eth1.ipaddr'] = ipaddr
+    #system['facts']['net.interface.eth1.ipaddr'] = ipaddr
     system['facts']['network.hostname'] = name
-    system['facts']['network.ipaddr']
+    #system['facts']['network.ipaddr']
     system['facts']['uname.nodename'] = name
-    system['facts']['virt.uuid'] = uuid
+    #system['facts']['virt.uuid'] = uuid
+
+    copies = {}
 
     for key in system['facts']:
         if type(system['facts'][key]) == dict:
-			attr_type = system['facts'][key].keys()[0]
-			if attr_type == 'array':
-				elem = random.randrange(0, len(system['facts'][key]['array']), 1)
-				system['facts'][key] = system['facts'][key]['array'][elem]
-			elif attr_type == 'uuid':
-				system['facts'][key] = generate_uuid()
+            attr_type = system['facts'][key].keys()[0]
+            if attr_type == 'array':
+                elem = random.randrange(0, len(system['facts'][key]['array']), 1)
+                system['facts'][key] = system['facts'][key]['array'][elem]
+            elif attr_type == 'uuid':
+                system['facts'][key] = generate_uuid()
+            elif attr_type == 'copy':
+                copies[key] = system['facts'][key]['copy']
+            elif attr_type == 'ipaddr':
+                system['facts'][key] = generate_ipaddr()
+	print copies
+    			
+    for attr in copies:
+        print attr
+        source = system['facts'][attr]['copy']
+        print source
+        system['facts'][attr] = system['facts'][source]
+	
     return system
