@@ -7,7 +7,7 @@
      "distribution.version": "6.2",
      "dmi.bios.address": "0xe8000",
      "dmi.bios.bios_revision": "1.0",
-     "dmi.bios.relase_date": "01/01/2007",
+     "dmi.bios.relase_date": {"date": ""},
      "dmi.bios.rom_size": "64 KB",
      "dmi.bios.runtime_size": "96 KB",
      "dmi.bios.vendor": "Seabios",

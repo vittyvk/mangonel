@@ -2,6 +2,7 @@ import json
 import random
 import string
 import uuid
+import time
 
 facts = json.load(open('base.json'))
 
@@ -58,6 +59,8 @@ def generate_system(name=None):
                 facts[key] = generate_ipaddr()
             elif attr_type == 'hostname':
                 facts[key] = generate_name()
+            elif attr_type == 'date':
+                facts[key] = time.strftime('%m/%d/%Y', time.gmtime(time.time() - random.randrange(0, 100000, 1)))
     			
     for attr in copies:
         source = facts[attr]['copy']
