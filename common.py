@@ -47,7 +47,7 @@ def generate_system(name=None):
         'facts'           : facts,
         }
 
-    system['facts']['dmi.system.uuid'] = uuid
+    #system['facts']['dmi.system.uuid'] = uuid
     system['facts']['net.interface.eth1.ipaddr'] = ipaddr
     system['facts']['network.hostname'] = name
     system['facts']['network.ipaddr']
@@ -56,8 +56,10 @@ def generate_system(name=None):
 
     for key in system['facts']:
         if type(system['facts'][key]) == dict:
-			if system['facts'][key].keys()[0] == 'array':
+			attr_type = system['facts'][key].keys()[0]
+			if attr_type == 'array':
 				elem = random.randrange(0, len(system['facts'][key]['array']), 1)
 				system['facts'][key] = system['facts'][key]['array'][elem]
-
+			elif attr_type == 'uuid':
+				system['facts'][key] = generate_uuid()
     return system
