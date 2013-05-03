@@ -93,5 +93,5 @@
      "uname.version": "#1 SMP Wed Nov 9 08:03:13 EST 2011",
      "virt.host_type": "kvm",
      "virt.is_guest": "true",
-     "virt.uuid": "None"
+     "virt.uuid": {"copy": "dmi.system.uuid"}
     }

@@ -54,6 +54,8 @@ def generate_system(name=None):
     system['facts']['uname.nodename'] = name
     system['facts']['virt.uuid'] = uuid
 
+    copies = {}
+
     for key in system['facts']:
         if type(system['facts'][key]) == dict:
 			attr_type = system['facts'][key].keys()[0]
@@ -62,4 +64,11 @@ def generate_system(name=None):
 				system['facts'][key] = system['facts'][key]['array'][elem]
 			elif attr_type == 'uuid':
 				system['facts'][key] = generate_uuid()
+			elif attr_type == 'copy':
+				copies[key] == system['facts'][key]['copy']
+				
+    for attr in copies:
+        source = system['facts'][attr]
+        system['facts'][attr] == system['facts'][source]
+	
     return system
