@@ -9,7 +9,7 @@ facts = json.load(open('base.json'))
 def generate_uuid():
 
     uuid_obj = uuid.uuid1()
-
+    
     return uuid_obj.urn.split(":")[-1]
 
 
@@ -19,7 +19,7 @@ def generate_name(min=4, max=8):
         min = 4
     if max < min:
         max = min
-        
+
     r = random.SystemRandom()
     pool = string.ascii_letters + string.digits
 
@@ -31,7 +31,13 @@ def generate_ipaddr():
     ipaddr = ".".join(str(random.randrange(0, 255, 1)) for x in range(4))
 
     return ipaddr
-    
+
+def generate_mac():
+    chars = ['a','b','c','d','e','f','0','1','2','3','4','5','6','7','8','9']
+    mac = ":".join(chars[random.randrange(0, len(chars), 1)]+chars[random.randrange(0, len(chars), 1)] for x in range(6))
+
+    return mac
+
 def generate_system(name=None):
 
     if name is None:
@@ -39,9 +45,6 @@ def generate_system(name=None):
 
     uuid = generate_uuid()
     ipaddr = generate_ipaddr()
-    
-    facts['network.hostname'] = name
-    facts['uname.nodename'] = name
 
     copies = {}
 
@@ -61,7 +64,9 @@ def generate_system(name=None):
                 facts[key] = generate_name()
             elif attr_type == 'date':
                 facts[key] = time.strftime('%m/%d/%Y', time.gmtime(time.time() - random.randrange(0, 100000, 1)))
-    			
+            elif attr_type == 'macaddr':
+                facts[key] = generate_mac()	
+
     for attr in copies:
         source = facts[attr]['copy']
         facts[attr] = facts[source]
@@ -73,5 +78,5 @@ def generate_system(name=None):
         'environment_id'  : None,
         'facts'           : facts,
         }
-	
+
     return system
