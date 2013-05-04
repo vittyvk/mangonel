@@ -76,7 +76,7 @@
      "memory.memtotal": "2055092",
      "memory.swaptotal": "2064376",
      "net.interface.eth1.broadcast": "10.10.169.255",
-     "net.interface.eth1.hwaddr": "52:54:00:b5:30:24",
+     "net.interface.eth1.hwaddr": {"macaddr": ""},
      "net.interface.eth1.ipaddr": {"ipaddr": ""},
      "net.interface.eth1.netmask": "255.255.254.0",
      "net.interface.lo.broadcast": "0.0.0.0",
