@@ -7,7 +7,19 @@ import time
 
 class api(object):
 
-    def __init__(self, host, username, password):
+    def __init__(self, host, project='katello', username='admin', password='admin'):
+        """
+        Initiates a session to the provided host, using credentials.
+        """
+
+        # Some clean up
+        if not host.startswith("https://") or not host.startswith("http://"):
+            host = "https://%s" % host
+        if host.endswith("/"):
+            host = "%s%s" % (host, project)
+        else:
+            host = "%s/%s" % (host, project)
+
         self.host = host
         self.api = "%s/api" % self.host
         self.session = requests.Session()
@@ -41,6 +53,36 @@ class api(object):
         return result
 
 
+    def get_systems(self, org):
+        """
+        Returns a list of all systems that belong to an organization.
+        """
+
+        result = []
+        
+        systems = self.url_get("organizations/%s/systems" % org['label'])
+
+        if systems:
+            result = systems.json()
+
+        return result
+
+
+    def get_system_by_name(self, org, name):
+        """
+        Returns a system from an organization.
+        """
+
+        result = None
+
+        system = [system for system in self.get_systems(org) if system['name'] == name]
+
+        if system:
+            result = system[0]
+
+        return result
+
+
     def add_system(self, org, env_name):
         result = None
 
@@ -55,20 +97,42 @@ class api(object):
         return result
 
 
-    def url_get(self, url, timing=True):
+    def delete_system(self, org, system_name):
+
+        system = self.get_system_by_name(org, system_name)
+
+        if system:
+            status = self.url_delete("systems/%s" % system['uuid'])
+
+
+    def url_get(self, url, timing=60):
+        """
+        Performs a GET using the url provided and waits (default) for
+        60 seconds before timing out.
+        """
         result = None
 
         # Strip leading forward slashes
         if url.startswith("/"): url = url[1:]
 
-        r = self.session.get("%s/%s" % (self.api, url))
-        if r.status_code == 200:
-            result = r.json()
+        try:
+            r = self.session.get("%s/%s" % (self.api, url), timeout=timing)
+            if r.status_code == 200:
+                result = r.json()
+            else:
+                print "Failed to GET url '%s': %s" % (url, r.text)
+        except requests.exceptions.Timeout, e:
+            print "Your request has timed out."
+            continue
 
         return result
 
 
-    def url_post(self, url, payload, timing=True):
+    def url_post(self, url, payload, timing=60):
+        """
+        Performs a POST using the url provided and waits (default) for
+        60 seconds before timing out.
+        """
         result = None
 
         # Strip leading forward slashes
@@ -76,12 +140,41 @@ class api(object):
 
         headers = {'content-type': 'application/json'}
 
-        r = self.session.post("%s/%s" % (self.api, url),
-                         data=json.dumps(payload),
-                         headers=headers)
+        try:
+            r = self.session.post("%s/%s" % (self.api, url),
+                                  data=json.dumps(payload),
+                                  headers=headers,
+                                  timeout=timing)
+            if r.status_code == 200:
+                result = r.json()
+            else:
+                print "Failed to POST to url '%s': %s" % (url, r.text)
 
-        import epdb; epdb.st()
-        if r.status_code == 200:
-            result = r.json()
+        except requests.exceptions.Timeout, e:
+            print "Your request has timed out."
+            continue
+
+        return result
+
+
+    def url_delete(self, url, timing=60):
+        """
+        Performs a GET using the url provided and waits (default) for
+        60 seconds before timing out.
+        """
+        result = False
+
+        # Strip leading forward slashes
+        if url.startswith("/"): url = url[1:]
+
+        try:
+            r = self.session.delete("%s/%s" % (self.api, url), timeout=timing)
+            if r.status_code == 204:
+                result = True
+            else:
+                print "Failed to DELETE: %s" % r.text
+        except requests.exceptions.Timeout, e:
+            print "Your request has timed out."
+            continue
 
         return result
