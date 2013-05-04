@@ -39,9 +39,6 @@ def generate_system(name=None):
 
     uuid = generate_uuid()
     ipaddr = generate_ipaddr()
-    
-    facts['network.hostname'] = name
-    facts['uname.nodename'] = name
 
     copies = {}
 
