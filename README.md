@@ -1,4 +1,4 @@
-![mangonel](mangonel.png)
+![mangonel](logo_mangonel.png)
 
 Mangonel
 ========
