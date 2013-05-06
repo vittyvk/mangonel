@@ -35,7 +35,7 @@ class api(object):
         environments = self.url_get("organizations/%s/environments" % org['label'])
 
         if environments:
-            env = [env for env in envs if env['label'] == name]
+            env = [env for env in environments if env['label'] == name]
 
         if env:
             result = env[0]
