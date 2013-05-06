@@ -26,6 +26,55 @@ class api(object):
         self.session.auth = (username, password)
         self.session.verify=False
 
+
+
+    def get_env_by_name(self, org, name):
+
+        result = None
+
+        environments = self.url_get("organizations/%s/environments" % org['label'])
+
+        if environments:
+            env = [env for env in envs if env['label'] == name]
+
+        if env:
+            result = env[0]
+
+        return result
+
+    
+    def create_env(self, org, name=None, prior='Library'):
+
+        env = None
+        
+        if name is None:
+            name = generate_name()
+
+        prior_env = self.get_env_by_name(org, prior)
+
+        if prior:
+            env = {'environment':
+                       {'name': name, 'prior': prior_env['id']}}
+
+            env = self.url_post("organizations/%s/environments" % org['label'], env)
+
+        return env
+
+    
+    def create_org(self, org=None):
+ 
+        if org is None:
+            name = generate_name(8)
+            org = {
+                'name': name,
+                'label': "label-%s" % name,
+                'description': "Generated automatically.",}
+
+        org = self.url_post("organizations", org)
+
+        return org
+
+
     def get_org(self, org_name):
         result = None
 
@@ -83,7 +132,7 @@ class api(object):
         return result
 
 
-    def add_system(self, org, env_name):
+    def create_system(self, org, env_name):
         result = None
 
         env = self.get_org_environments(org, env_name)
@@ -123,7 +172,7 @@ class api(object):
                 print "Failed to GET url '%s': %s" % (url, r.text)
         except requests.exceptions.Timeout, e:
             print "Your request has timed out."
-            continue
+            pass
 
         return result
 
@@ -152,7 +201,7 @@ class api(object):
 
         except requests.exceptions.Timeout, e:
             print "Your request has timed out."
-            continue
+            pass
 
         return result
 
@@ -175,6 +224,6 @@ class api(object):
                 print "Failed to DELETE: %s" % r.text
         except requests.exceptions.Timeout, e:
             print "Your request has timed out."
-            continue
+            pass
 
         return result
