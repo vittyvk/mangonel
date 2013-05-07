@@ -13,8 +13,9 @@ class api(object):
         """
 
         # Some clean up
-        if not host.startswith("https://") or not host.startswith("http://"):
-            host = "https://%s" % host
+        if not host.startswith("https://"):
+            if not host.startswith("http://"):
+                host = "https://%s" % host
         if host.endswith("/"):
             host = "%s%s" % (host, project)
         else:
