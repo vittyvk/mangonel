@@ -18,7 +18,7 @@ class api(object):
                 host = "https://%s" % host
             else:
                 host = "https://%s" % host[7:]
-                
+
         if host.endswith("/"):
             host = "%s%s" % (host, project)
         else:
@@ -46,11 +46,11 @@ class api(object):
 
         return result
 
-    
+
     def create_env(self, org, name=None, prior='Library'):
 
         env = None
-        
+
         if name is None:
             name = generate_name()
 
@@ -64,9 +64,9 @@ class api(object):
 
         return env
 
-    
+
     def create_org(self, org=None):
- 
+
         if org is None:
             name = generate_name(8)
             org = {
@@ -112,7 +112,7 @@ class api(object):
         """
 
         result = []
-        
+
         systems = self.url_get("organizations/%s/systems" % org['label'])
 
         if systems:
@@ -174,6 +174,9 @@ class api(object):
                 result = r.json()
             else:
                 print "Failed to GET url '%s': %s" % (url, r.text)
+        except requests.exceptions.ConnectionError, e:
+            print "Was not able to connect to %s" % url
+            pass
         except requests.exceptions.Timeout, e:
             print "Your request has timed out."
             pass
@@ -203,6 +206,9 @@ class api(object):
             else:
                 print "Failed to POST to url '%s': %s" % (url, r.text)
 
+        except requests.exceptions.ConnectionError, e:
+            print "Was not able to connect to %s" % url
+            pass
         except requests.exceptions.Timeout, e:
             print "Your request has timed out."
             pass
@@ -226,6 +232,9 @@ class api(object):
                 result = True
             else:
                 print "Failed to DELETE: %s" % r.text
+        except requests.exceptions.ConnectionError, e:
+            print "Was not able to connect to %s" % url
+            pass
         except requests.exceptions.Timeout, e:
             print "Your request has timed out."
             pass
