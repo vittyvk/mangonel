@@ -1,4 +1,6 @@
 from common import *
+
+import datetime
 import json
 import requests
 import sys
@@ -39,7 +41,7 @@ class api(object):
         environments = self.url_get("organizations/%s/environments" % org['label'])
 
         if environments:
-            env = [env for env in environments if env['label'] == name]
+            env = [env for env in environments if env['name'] == name]
 
         if env:
             result = env[0]
@@ -65,18 +67,17 @@ class api(object):
         return env
 
 
-    def create_org(self, org=None):
+    def create_org(self, name=None):
 
-        if org is None:
+        if name is None:
             name = generate_name(8)
             org = {
                 'name': name,
                 'label': "label-%s" % name,
                 'description': "Generated automatically.",}
 
-        org = self.url_post("organizations", org)
+        return self.url_post("organizations", org)
 
-        return org
 
 
     def get_org(self, org_name):
@@ -150,6 +151,18 @@ class api(object):
         return result
 
 
+    def system_checkin(self, system_uuid, checking_time=None):
+
+        if not checkin_time:
+            checkin_time = datetime.datetime.now()
+
+        params = {
+            "date": checkin_time.isoformat()
+        }
+        
+        return self.url_put("systems/%s/checkin" % system_uuid, params)
+
+    
     def delete_system(self, org, system_name):
 
         system = self.get_system_by_name(org, system_name)
@@ -158,6 +171,11 @@ class api(object):
             status = self.url_delete("systems/%s" % system['uuid'])
 
 
+    def get_system_subscriptions(self, system_uuid):
+
+        return self.url_get("systems/%s/subscriptions" % system_uuid)
+
+    
     def url_get(self, url, timing=60):
         """
         Performs a GET using the url provided and waits (default) for
@@ -214,6 +232,39 @@ class api(object):
             pass
 
         return result
+
+
+    def url_put(self, url, payload, timing=60):
+        """
+        Performs a PUT using the url provided and waits (default) for
+        60 seconds before timing out.
+        """
+        result = None
+
+        # Strip leading forward slashes
+        if url.startswith("/"): url = url[1:]
+
+        headers = {'content-type': 'application/json'}
+
+        try:
+            r = self.session.post("%s/%s" % (self.api, url),
+                                  data=json.dumps(payload),
+                                  headers=headers,
+                                  timeout=timing)
+            if r.status_code == 200:
+                result = r.json()
+            else:
+                print "Failed to PUT to url '%s': %s" % (url, r.text)
+
+        except requests.exceptions.ConnectionError, e:
+            print "Was not able to connect to %s" % url
+            pass
+        except requests.exceptions.Timeout, e:
+            print "Your request has timed out."
+            pass
+
+        return result
+
 
 
     def url_delete(self, url, timing=60):
