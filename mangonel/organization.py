@@ -31,9 +31,9 @@ class Organization():
         return self.api.delete(name)
 
     
-    def organization(name):
+    def organization(self, name):
         return self.api.organization(name)
 
 
-    def organizations():
+    def organizations(self):
         return self.api.organizations()

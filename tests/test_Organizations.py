@@ -11,6 +11,7 @@ class TestOrganizations(BaseTest):
 
     def setUp(self):
         BaseTest.setUp(self)
+
         self.server = Server(host=self.host,
                        project=self.project,
                        username=self.user,
@@ -30,30 +31,30 @@ class TestOrganizations(BaseTest):
         "Creates a new organization."
         
         org = self.org.create_org()
-        self.assertEqual(org, self.api.get_org(org['name']), 'Failed to create and retrieve org.')
+        self.assertEqual(org, self.org.organization(org['name']), 'Failed to create and retrieve org.')
 
 
     def test_create_org2(self):
         "Creates a new organization with an initial environment."
 
-        org = self.api.create_org()
-        self.assertEqual(org, self.api.get_org(org['name']), 'Failed to create and retrieve org.')
+        org = self.org.create_org()
+        self.assertEqual(org, self.org.organization(org['name']), 'Failed to create and retrieve org.')
 
-        env = self.api.create_env(org, 'Dev', 'Library')
-        self.assertEqual(env, self.api.get_env_by_name(org, 'Dev'))
+        env = self.env.create_environment(org, 'Dev', 'Library')
+        self.assertEqual(env, self.env.environment_by_name(org, 'Dev'))
 
 
     def test_create_org3(self):
         "Creates a new organization with several environments."
 
-        org = self.api.create_org()
-        self.assertEqual(org, self.api.get_org(org['name']), 'Failed to create and retrieve org.')
+        org = self.org.create_org()
+        self.assertEqual(org, self.org.organization(org['name']), 'Failed to create and retrieve org.')
 
-        env = self.api.create_env(org, 'Dev', 'Library')
-        self.assertEqual(env, self.api.get_env_by_name(org, 'Dev'))
+        env = self.env.create_environment(org, 'Dev', 'Library')
+        self.assertEqual(env, self.env.environment_by_name(org, 'Dev'))
 
-        env = self.api.create_env(org, 'Testing', 'Dev')
-        self.assertEqual(env, self.api.get_env_by_name(org, 'Testing'))
+        env = self.env.create_environment(org, 'Testing', 'Dev')
+        self.assertEqual(env, self.env.environment_by_name(org, 'Testing'))
 
-        env = self.api.create_env(org, 'Release', 'Testing')
-        self.assertEqual(env, self.api.get_env_by_name(org, 'Release'))
+        env = self.env.create_environment(org, 'Release', 'Testing')
+        self.assertEqual(env, self.env.environment_by_name(org, 'Release'))

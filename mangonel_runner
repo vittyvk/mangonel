@@ -18,7 +18,7 @@ if __name__ == "__main__":
     parser.add_argument('-s', '--host', type=str, dest='host', help='Server url')
     parser.add_argument('-u', '--username', type=str, dest='username', help='Valid system username')
     parser.add_argument('-p', '--password', type=str, dest='password', help='Valid system user password')
-    parser.add_argument('--project', type=str, dest='project', default='katello', help='Project can be either "katello" or "headpin"')
+    parser.add_argument('--project', type=str, dest='project', default='/katello', help='Project can be either "katello" or "headpin"')
     parser.add_argument('-t', '--tests', type=str, nargs='+', help='The name of the tests to be run.')
     parser.add_argument('--verbose', type=int, dest='verbose', default=1, help='Debug verbosity level')
 
