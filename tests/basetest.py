@@ -1,3 +1,6 @@
+import logging
+import logging.config
+
 import os
 import unittest
 
@@ -9,3 +12,6 @@ class BaseTest(unittest.TestCase):
         self.user = os.getenv('USERNAME', None)
         self.password = os.getenv('PASSWORD', None)
 
+        logging.config.fileConfig("logging.conf")
+        
+        self.logger = logging.getLogger("mangonel")
