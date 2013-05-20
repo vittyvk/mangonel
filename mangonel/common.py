@@ -39,10 +39,7 @@ def generate_mac():
 
     return mac
 
-def generate_system(name=None):
-
-    if name is None:
-        name = "%s.example.com" % generate_name()
+def generate_facts(system_name):
 
     uuid = generate_uuid()
     ipaddr = generate_ipaddr()
@@ -62,7 +59,7 @@ def generate_system(name=None):
             elif attr_type == 'ipaddr':
                 facts[key] = generate_ipaddr()
             elif attr_type == 'hostname':
-                facts[key] = generate_name()
+                facts[key] = system_name
             elif attr_type == 'date':
                 facts[key] = time.strftime('%m/%d/%Y', time.gmtime(time.time() - random.randrange(0, 100000, 1)))
             elif attr_type == 'macaddr':
@@ -72,12 +69,4 @@ def generate_system(name=None):
         source = facts[attr]['copy']
         facts[attr] = facts[source]
 
-    system = {
-        'name'            : facts['network.hostname'],
-        'cp_type'         : 'system',
-        'organization_id' : None,
-        'environment_id'  : None,
-        'facts'           : facts,
-        }
-
-    return system
+    return facts
