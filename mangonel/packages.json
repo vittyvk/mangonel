@@ -1,0 +1,14 @@
+[
+    {"arch": "x86_64", "vendor": "Red Hat, Inc.", "epoch": 0, "name": "parted", "release": "17.el6", "version": "2.1"},
+    {"arch": "x86_64", "vendor": "Red Hat, Inc.", "epoch": 0, "name": "gstreamer-tools", "release": "1.el6", "version": "0.10.29"},
+    {"arch": "x86_64", "vendor": "Red Hat, Inc.", "epoch": 0, "name": "pm-utils", "release": "9.el6", "version": "1.2.5"},
+    {"arch": "x86_64", "vendor": "Red Hat, Inc.", "epoch": 0, "name": "iw", "release": "4.el6", "version": "0.9.17"},
+    {"arch": "x86_64", "vendor": "Red Hat, Inc.", "epoch": 0, "name": "crda", "release": "1.el6", "version": "1.1.1_2010.11.22"},
+    {"arch": "x86_64", "vendor": "Red Hat, Inc.", "epoch": 0, "name": "keyutils", "release": "3.el6", "version": "1.4"},
+    {"arch": "x86_64", "vendor": "Red Hat, Inc.", "epoch": 0, "name": "ntp", "release": "2.el6", "version": "4.2.4p8"},
+    {"arch": "x86_64", "vendor": "Red Hat, Inc.", "epoch": 0, "name": "libutempter", "release": "4.1.el6", "version": "1.1.5"},
+    {"arch": "x86_64", "vendor": "Red Hat, Inc.", "epoch": 0, "name": "cronie", "release": "7.el6", "version": "1.4.4"},
+    {"arch": "x86_64", "vendor": "Red Hat, Inc.", "epoch": 0, "name": "boost-iostreams", "release": "11.el6_1.2", "version": "1.41.0"},
+    {"arch": "x86_64", "vendor": "Red Hat, Inc.", "epoch": 0, "name": "certmonger", "release": "3.el6", "version": "0.50"},
+    {"arch": "x86_64", "vendor": "Red Hat, Inc.", "epoch": 0, "name": "upstart", "release": "10.el6", "version": "0.6.5"}
+]
