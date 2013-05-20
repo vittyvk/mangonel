@@ -6,11 +6,12 @@ import uuid
 import time
 
 facts = json.load(open(os.path.join(os.path.dirname(__file__), 'base.json')))
+packages = json.load(open(os.path.join(os.path.dirname(__file__), 'packages.json')))
 
 def generate_uuid():
 
     uuid_obj = uuid.uuid1()
-    
+
     return uuid_obj.urn.split(":")[-1]
 
 
@@ -63,10 +64,13 @@ def generate_facts(system_name):
             elif attr_type == 'date':
                 facts[key] = time.strftime('%m/%d/%Y', time.gmtime(time.time() - random.randrange(0, 100000, 1)))
             elif attr_type == 'macaddr':
-                facts[key] = generate_mac()	
+                facts[key] = generate_mac()
 
     for attr in copies:
         source = facts[attr]['copy']
         facts[attr] = facts[source]
 
     return facts
+
+def packages_list():
+    return packages

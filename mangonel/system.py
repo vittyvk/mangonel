@@ -16,11 +16,11 @@ except ImportError, e:
 class System():
     api = SystemAPI()
     
-    def create_system(self, name, org, env, ak=None, type='system',
+    def create_system(self, org, env, name=None, ak=None, type='system',
                       release=None, sla=None, facts=None, view_id=None, installed_products=None):
 
         if name is None:
-            name = generate_name(8)
+            name = "%s.example.com" % generate_name(8)
 
         if facts is None:
             facts = generate_facts(name)
@@ -36,13 +36,13 @@ class System():
         return self.api.checkin(system['uuid'])
 
 
-    def system(self, system_id):
-        return self.api.system(system_id)
+    def system(self, system_uuid):
+        return self.api.system(system_uuid)
 
     
     def update_packages(self, system, packages=None):
 
         if packages is None:
-            continue
+            packages = packages_list()
 
         return self.api.update_packages(system['uuid'], packages)
