@@ -30,12 +30,12 @@ class TestOrganizations(BaseTest):
         self.server = None
 
         self.ellapsed_time = time.time() - self.start_time
-        self.logger.info("Test ellapsed time: %s" % self.ellapsed_time)        
+        self.logger.info("Test ellapsed time: %s" % self.ellapsed_time)
 
 
     def test_create_system_1(self):
         "Creates a new organization with environment and register a system."
-        
+
         org = self.org_api.create_org()
         self.logger.debug("Created organization %s" % org['name'])
         self.assertEqual(org, self.org_api.organization(org['name']), 'Failed to create and retrieve org.')
