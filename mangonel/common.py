@@ -23,9 +23,13 @@ def generate_name(min=4, max=8):
         max = min
 
     r = random.SystemRandom()
-    pool = string.ascii_letters + string.digits
+    pool1 = string.ascii_lowercase
+    pool2 = string.digits
 
-    return str().join(r.choice(pool) for x in range(random.randint(min, max)))
+    return "%s-%s" % (
+        str().join(r.choice(pool1) for x in range(random.randint(min, max))),
+        str().join(r.choice(pool2) for x in range(random.randint(min, max)))
+        )
 
 
 def generate_ipaddr():
