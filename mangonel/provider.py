@@ -40,6 +40,7 @@ class Provider():
         task = self.api.sync(pId)[0]
 
         while task['state'] != 'finished':
+            print "Synchronizing..."
             task = self.api.last_sync_status(pId)
 
         return task
