@@ -71,9 +71,10 @@ class TestStress(BaseTest):
         self.assertEqual(repo, self.repo_api.repository(repo['id']))
 
         # Sync
-        self.prd_api.sync()
+        self.prv_api.sync(prv['id'])
+        self.assertEqual(self.prv_api.provider(prv['id'])['sync_state'], 'finished')
+        self.logger.debug("Finished synchronizing Provider1")
 
-        
         system_time = time.time()
         for idx in range(128):
             sys1 = self.sys_api.create_system(org, env)
