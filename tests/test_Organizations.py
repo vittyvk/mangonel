@@ -17,7 +17,8 @@ class TestOrganizations(BaseTest):
         self.server = Server(host=self.host,
                        project=self.project,
                        username=self.user,
-                       password=self.password)
+                       password=self.password,
+                       port=self.port)
         self.org_api = Organization()
         self.env_api = Environment()
 
@@ -28,11 +29,11 @@ class TestOrganizations(BaseTest):
         self.server = None
 
         self.ellapsed_time = time.time() - self.start_time
-        self.logger.info("Test ellapsed time: %s" % self.ellapsed_time)        
+        self.logger.info("Test ellapsed time: %s" % self.ellapsed_time)
 
     def test_create_org1(self):
         "Creates a new organization."
-        
+
         org = self.org_api.create_org()
         self.logger.debug("Created organization %s" % org['name'])
         self.assertEqual(org, self.org_api.organization(org['name']), 'Failed to create and retrieve org.')
@@ -40,7 +41,7 @@ class TestOrganizations(BaseTest):
 
     def test_create_org2(self):
         "Creates a new organization and then deletes it."
-        
+
         org = self.org_api.create_org()
         self.logger.debug("Created organization %s" % org['name'])
         self.assertEqual(org, self.org_api.organization(org['name']), 'Failed to create and retrieve org.')
