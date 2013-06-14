@@ -34,6 +34,7 @@ class ContentView():
     def content_views_by_label_name_or_id(self, org, label=None, name=None, cvId=None):
         return self.api.views_by_label_name_or_id(org['label'], label, name, cvId)[0]
 
+
     def refresh(self, cvId):
 
         ptask = self.api.refresh(cvId)

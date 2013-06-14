@@ -61,7 +61,7 @@ class ContentViewDefinition():
 
         task = self.task_api.status(ptask['uuid'])
         while task['state'] != 'finished':
-            self.logger.debug("Publishing content view description %s" % name)
+            print "Publishing content view description %s" % name
             task = self.task_api.status(ptask['uuid'])
 
     

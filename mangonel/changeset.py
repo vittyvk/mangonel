@@ -26,7 +26,7 @@ class Changeset():
         if description is None:
             description = "Promoted on %s" % datetime.datetime.now().strftime("%Y-%m-%d-%H-%M-%S")
 
-        return self.api.create(name, org['label'], env['id'], type_in, description)
+        return self.api.create(org['label'], name, env['id'], type_in, description)
 
 
     def delete(self, chsId):
@@ -42,13 +42,14 @@ class Changeset():
 
 
     def add_content(self, chsId, content, contentType='content_views'):
-        return self.api.add_content(chsId, contentType, {'content_view' : content['id'] })
+        return self.api.add_content(chsId, contentType, {'content_view_id' : content['id'] })
+
 
     def apply(self, chsId):
         applyTask = self.api.apply(chsId)
 
         task = self.task_api.status(applyTask['uuid'])
         while task['state'] != 'finished':
-            self.logger.debug("Promoting content...")
+            print "Promoting content..."
             task = self.task_api.status(applyTask['uuid'])
 

@@ -87,7 +87,7 @@ class TestStress(BaseTest):
         
         # Published Content view
         self.cvd_api.publish(org, cvd['id'], 'PublishedCVD1')
-        pcvd = self.cv_api.content_views_by_label_name_or_id(org['label'], name='PublishedCVD1')
+        pcvd = self.cv_api.content_views_by_label_name_or_id(org, name='PublishedCVD1')
 
         # Changeset
         chs = self.chs_api.create(org, env1, 'Promote01')
@@ -96,7 +96,7 @@ class TestStress(BaseTest):
         
         system_time = time.time()
         for idx in range(128):
-            sys1 = self.sys_api.create_system(org, env)
+            sys1 = self.sys_api.create_system(org, env1)
             self.logger.debug("Created system %s" % sys1['uuid'])
             self.assertEqual(sys1['uuid'], self.sys_api.system(sys1['uuid'])['uuid'])
         total_system_time = time.time() - system_time
