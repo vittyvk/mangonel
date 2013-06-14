@@ -16,7 +16,7 @@ except ImportError, e:
 class Organization():
     api = OrganizationAPI()
     
-    def create_org(self, name=None):
+    def create(self, name=None):
 
         if name is None:
             name = generate_name(8)
@@ -27,7 +27,7 @@ class Organization():
         return self.api.create(name, label, description)
 
     
-    def delete_org(self, name):
+    def delete(self, name):
         return self.api.delete(name)
 
     
@@ -37,3 +37,7 @@ class Organization():
 
     def organizations(self):
         return self.api.organizations()
+
+
+    def pools(self, name):
+        return self.api.pools(name)

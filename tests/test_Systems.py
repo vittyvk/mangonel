@@ -36,7 +36,7 @@ class TestOrganizations(BaseTest):
     def test_create_system_1(self):
         "Creates a new organization with environment and register a system."
 
-        org = self.org_api.create_org()
+        org = self.org_api.create()
         self.logger.debug("Created organization %s" % org['name'])
         self.assertEqual(org, self.org_api.organization(org['name']), 'Failed to create and retrieve org.')
 
