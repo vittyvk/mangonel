@@ -48,7 +48,7 @@ class TestStress(BaseTest):
     def test_stress_128_1(self):
         "Creates a new organization with environment and register a system."
 
-        org = self.org_api.create_org()
+        org = self.org_api.create()
         self.logger.debug("Created organization %s" % org['name'])
         self.assertEqual(org, self.org_api.organization(org['name']), 'Failed to create and retrieve org.')
 
@@ -100,15 +100,17 @@ class TestStress(BaseTest):
         self.chs_api.apply(chs['id'])
 
         system_time = time.time()
+        pools = self.org_api.pools(org['label'])
         
         for idx in range(128):
             sys1 = self.sys_api.create_system(org, env1)
             self.logger.debug("Created system %s" % sys1['uuid'])
             self.assertEqual(sys1['uuid'], self.sys_api.system(sys1['uuid'])['uuid'])
 
-            #TODO: find out what pool to use outside the loop to speed
-            #things up
-            self.sys_api.subscribe(sys1['uuid'], prd['name'])
+            for pool in pools:
+                self.sys_api.subscribe(sys1['uuid'], pool['id'])
+                self.logger.debug("Subscribe system to pool %s" % pool['id'])
+
         total_system_time = time.time() - system_time
         print "Total time spent for systems: %f" % total_system_time
-        print "Mean time: %f" % total_system_time / 128
+        print "Mean time: %f" % (total_system_time / 128)
