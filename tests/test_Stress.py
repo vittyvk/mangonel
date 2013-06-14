@@ -70,7 +70,7 @@ class TestStress(BaseTest):
 
         prd = self.prd_api.create_product(prv, 'Product1')
         self.logger.debug("Created product Product1")
-        self.assertEqual(prd, self.prd_api.product(org, prd['id']))
+        self.assertEqual(prd['id'], self.prd_api.product(org, prd['id'])['id'])
 
         repo = self.repo_api.create_repository(org, prd, 'http://hhovsepy.fedorapeople.org/fakerepos/zoo4/', 'Repo1')
         self.logger.debug("Created repositiry Repo1")
@@ -83,24 +83,32 @@ class TestStress(BaseTest):
 
         # Content View Definition
         cvd = self.cvd_api.create_content_view_definition(org, 'CVD1')
+        self.logger.debug("Created Content View Definition CVD1")
         prods = self.cvd_api.update_products(org, cvd['id'], prd)
+        self.logger.debug("Added %s to Content View Definition" % prd['name'])
         
         # Published Content view
         self.cvd_api.publish(org, cvd['id'], 'PublishedCVD1')
         pcvd = self.cv_api.content_views_by_label_name_or_id(org, name='PublishedCVD1')
+        self.logger.debug("Published Content View PublishedCVD1")
 
         # Changeset
         chs = self.chs_api.create(org, env1, 'Promote01')
+        self.logger.debug("Created promotion changeset Promote01")
         self.chs_api.add_content(chs['id'], pcvd)
+        self.logger.debug("Added %s to changeset" % pcvd['name'])
         self.chs_api.apply(chs['id'])
-        
+
         system_time = time.time()
+        
         for idx in range(128):
             sys1 = self.sys_api.create_system(org, env1)
             self.logger.debug("Created system %s" % sys1['uuid'])
             self.assertEqual(sys1['uuid'], self.sys_api.system(sys1['uuid'])['uuid'])
+
+            #TODO: find out what pool to use outside the loop to speed
+            #things up
+            self.sys_api.subscribe(sys1['uuid'], prd['name'])
         total_system_time = time.time() - system_time
         print "Total time spent for systems: %f" % total_system_time
         print "Mean time: %f" % total_system_time / 128
-
-        self.org_api.delete_org(org['name'])

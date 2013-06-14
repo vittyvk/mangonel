@@ -46,3 +46,21 @@ class System():
             packages = packages_list()
 
         return self.api.update_packages(system['uuid'], packages)
+
+
+    def available_pools(self, sId, match_system=False, match_installed=False, no_overlap=False):
+        return self.api.available_pools(sId, match_system, match_installed, no_overlap)['pools']
+
+
+    def pool(self, sId, product_name):
+        pools = self.available_pools(sId)
+
+        return [p for p in pools if p['productName'] == product_name]
+
+    def subscribe(self, sId, product_name, pool=None, qty=1):
+
+        if pool is None:
+            pool = self.pool(sId, product_name)
+            pool = pool[0]['id']
+
+        return self.api.subscribe(sId, pool, qty)

@@ -26,7 +26,7 @@ class Changeset():
         if description is None:
             description = "Promoted on %s" % datetime.datetime.now().strftime("%Y-%m-%d-%H-%M-%S")
 
-        return self.api.create(org['label'], name, env['id'], type_in, description)
+        return self.api.create(org['label'], env['id'], name, type_in, description)
 
 
     def delete(self, chsId):
