@@ -11,7 +11,7 @@ except ImportError, e:
 
 class Environment():
     api = EnvironmentAPI()
-    
+
     def create_environment(self, org, name=None, prior='Library'):
 
         if name is None:
@@ -20,7 +20,7 @@ class Environment():
         if prior:
             prior = self.environment_by_name(org, prior)
             prior_id = prior['id']
-            
+
         label = "label-%s" % name.replace(' ', '_')
         description = "Generated automatically."
 

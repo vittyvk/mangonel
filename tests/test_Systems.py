@@ -18,7 +18,8 @@ class TestOrganizations(BaseTest):
         self.server = Server(host=self.host,
                        project=self.project,
                        username=self.user,
-                       password=self.password)
+                       password=self.password,
+                       port=self.port)
         self.org_api = Organization()
         self.env_api = Environment()
         self.sys_api = System()

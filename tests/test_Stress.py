@@ -24,7 +24,8 @@ class TestStress(BaseTest):
         self.server = Server(host=self.host,
                        project=self.project,
                        username=self.user,
-                       password=self.password)
+                       password=self.password,
+                       port=self.port)
         self.org_api = Organization()
         self.chs_api = Changeset()
         self.cv_api = ContentView()

@@ -15,7 +15,7 @@ except ImportError, e:
 
 class System():
     api = SystemAPI()
-    
+
     def create_system(self, org, env, name=None, ak=None, type='system',
                       release=None, sla=None, facts=None, view_id=None, installed_products=None):
 
@@ -27,11 +27,30 @@ class System():
 
         return self.api.register(name, org['label'], env['id'], ak, type, release, sla, facts, view_id, installed_products)
 
+    def get_or_create_system(self, org, env, name=None, ak=None, type='system',
+                             release=None, sla=None, facts=None, view_id=None, installed_products=None):
+
+        sys = None
+
+        query = {}
+        if name is not None:
+            query['name'] = name
+
+        if query != {}:
+            systems = self.api.systems_by_env(env['id'], query)
+            if systems != []:
+                sys = systems[0]
+            else:
+                sys = self.create_system(org, env, name, ak, type,
+                                         release, sla, facts, view_id, installed_products)
+
+        return sys
+
 
     def delete_system(self, system):
         return self.api.unregister(system['uuid'])
 
-    
+
     def checkin(self, system):
         return self.api.checkin(system['uuid'])
 
@@ -39,7 +58,7 @@ class System():
     def system(self, system_uuid):
         return self.api.system(system_uuid)
 
-    
+
     def update_packages(self, system, packages=None):
 
         if packages is None:
