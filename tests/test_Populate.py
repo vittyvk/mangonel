@@ -29,8 +29,8 @@ class TestCSVPopulate(BaseTest):
 
         # Include the main options here so test suites may add their own
         parser = argparse.ArgumentParser()
-        parser.add_argument('-org-csv', '--org-csv', type=str, dest='org_csv')
-        parser.add_argument('-sys-csv', '--sys-csv', type=str, dest='sys_csv')
+        parser.add_argument('-dorg', '--org-csv', type=str, dest='org_csv')
+        parser.add_argument('-dsys', '--sys-csv', type=str, dest='sys_csv')
         [self.args, ignored_args] = parser.parse_known_args()
 
         self.start_time = time.time()
@@ -41,6 +41,13 @@ class TestCSVPopulate(BaseTest):
 
         self.ellapsed_time = time.time() - self.start_time
         self.logger.info("Test ellapsed time: %s" % self.ellapsed_time)
+
+
+    def namify(self, name, row):
+        try:
+            return name % row
+        except TypeError:
+            return name
 
 
     # CSV
@@ -55,7 +62,6 @@ class TestCSVPopulate(BaseTest):
         data = csv.DictReader(open(self.args.org_csv))
         for row in data:
             org = self.org_api.get_or_create_org(row['Name'], row['Label'])
-            print org
 
         return
 
@@ -72,15 +78,63 @@ class TestCSVPopulate(BaseTest):
     def test_setup_systems(self):
         "Creates systems based upon CSV"
 
+        if self.args.sys_csv is None:
+            return
+
+        # Accumulate host systems so guests can be stored and associted (mimicing virt-who)
+        #
+        host_systems = {}
+
         data = csv.DictReader(open(self.args.sys_csv))
         for row in data:
             org = self.org_api.organization(row['Org Label'])
             env = self.env_api.environment_by_name(org, row['Environment Label'])
 
-            num = 1
+            num = 0
             total = int(row['Count'])
             while num < total:
                 num += 1
-                sys = self.sys_api.get_or_create_system(org, env, row['Name'] % num)
+
+                sys = self.sys_api.get_or_create_system(org, env, self.namify(row['Name'], num))
+
+                self.system_update(sys, num, row)
+
+                if row['Host']:
+                    host_systems = self.set_host_guest(host_systems, org, env, sys, num, row)
 
         self.assertEqual(1, 1, 'Failed')
+
+
+    def system_update(self, sys, num, row):
+        facts = {}
+        if row['Virtual'] == 'Yes':
+            facts['virt.is_guest'] = True
+            facts['virt.uuid'] = self.namify(row['Name'], num)
+        else:
+            facts['virt.is_guest'] = False
+
+        installed_products = []
+        if row['Products']:
+            for product in row['Products'].split(','):
+                [product_number, product_name] = product.split('|')
+                installed_products.append({'productId': int(product_number), 'productName': product_name})
+
+        params = {}
+        params['facts'] = facts
+        params['installedProducts'] = installed_products
+        self.sys_api.api.update(sys['uuid'], params)
+
+
+    def set_host_guest(self, host_systems, org, env, sys, num, row):
+        host_name = self.namify(row['Host'], num)
+        if not host_name in host_systems:
+            host = self.sys_api.get_or_create_system(org, env, host_name)
+            host_systems[host_name] = [host['uuid']]
+
+        #host_systems[host_name].append(sys['uuid'])
+        host_systems[host_name].append(self.namify(row['Name'], num))
+
+        params = {}
+        params['guestIds'] = host_systems[host_name][1::]
+        self.sys_api.api.update(host_systems[host_name][0], params)
+        return host_systems

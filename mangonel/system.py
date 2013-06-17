@@ -27,6 +27,7 @@ class System():
 
         return self.api.register(name, org['label'], env['id'], ak, type, release, sla, facts, view_id, installed_products)
 
+
     def get_or_create_system(self, org, env, name=None, ak=None, type='system',
                              release=None, sla=None, facts=None, view_id=None, installed_products=None):
 
