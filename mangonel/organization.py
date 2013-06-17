@@ -17,7 +17,7 @@ except ImportError, e:
 class Organization():
     api = OrganizationAPI()
 
-    def create(self, name=None):
+    def create(self, name=None, label=None, description=None):
 
         if name is None:
             name = generate_name(8)
@@ -37,7 +37,7 @@ class Organization():
         except server.ServerRequestError, e:
             if e[1]['displayMessage'] != "Couldn't find organization '%s'" % label:
                 raise(e)
-            org = self.create_org(name, label, description)
+            org = self.create(name, label, description)
 
         return org
 
