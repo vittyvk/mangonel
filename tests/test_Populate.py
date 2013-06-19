@@ -102,6 +102,9 @@ class TestCSVPopulate(BaseTest):
                 if row['Host']:
                     host_systems = self.set_host_guest(host_systems, org, env, sys, num, row)
 
+                self.sys_api.checkin(sys)
+                self.sys_api.api.refresh_subscriptions(sys['uuid'])
+
         self.assertEqual(1, 1, 'Failed')
 
 
@@ -112,6 +115,11 @@ class TestCSVPopulate(BaseTest):
             facts['virt.uuid'] = self.namify(row['Name'], num)
         else:
             facts['virt.is_guest'] = False
+        facts['cpu.core(s)_per_socket'] = row['Cores']
+        facts['cpu.cpu_socket(s)'] = row['Sockets']
+        facts['memory.memtotal'] = int(row['RAM']) * 1048576
+        facts['uname.machine'] = row['Arch']
+        [facts['distribution.name'], facts['distribution.version']] = row['OS'].split(' ')
 
         installed_products = []
         if row['Products']:
