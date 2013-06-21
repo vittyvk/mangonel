@@ -28,7 +28,7 @@ OK
 You can also use unittest directly, as long as you provide the required arguments using environmental variables:
 
 ```bash
-$ HOST=my.katello.com USER=admin PASSWORD=admin PROJECT=katello python -m unittest tests.test_Organizations
+$ HOST=my.katello.com USERNAME=admin PASSWORD=admin PROJECT=katello python -m unittest tests.test_Organizations
 ...
 ----------------------------------------------------------------------
 Ran 3 tests in 9.359s
@@ -36,5 +36,5 @@ Ran 3 tests in 9.359s
 OK
 ```
 
-*Mangonel's image is a file from the [Wikimedia Commons](https://commons.wikimedia.org/wiki/Main_Page). Information from its [description page](https://commons.wikimedia.org/wiki/File:Mangonneau.png) there is shown below. 
+*Mangonel's image is a file from the [Wikimedia Commons](https://commons.wikimedia.org/wiki/Main_Page). Information from its [description page](https://commons.wikimedia.org/wiki/File:Mangonneau.png) there is shown below.
 Commons is a freely licensed media file repository. [You can help](https://commons.wikimedia.org/wiki/Commons:Welcome).*
