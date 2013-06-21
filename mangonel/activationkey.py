@@ -1,3 +1,5 @@
+from katello.client.server import ServerRequestError
+
 from common import *
 
 import datetime
@@ -15,7 +17,7 @@ except ImportError, e:
 
 class ActivationKey():
     api = ActivationKeyAPI()
-    
+
     def create(self, env, name=None, description=None, limit=-1, cvId=None):
 
         if name is None:

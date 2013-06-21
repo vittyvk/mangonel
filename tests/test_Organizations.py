@@ -48,7 +48,7 @@ class TestOrganizations(BaseTest):
 
         self.logger.info("Deleting organization %s" % org['name'])
         self.org_api.delete(org['name'])
-        #self.assertRaises(ServerRequestError, self.org_api.organization(org['name']))
+        self.assertRaises(ServerRequestError, lambda: self.org_api.organization(org['name']))
 
 
     def test_create_org3(self):

@@ -8,6 +8,9 @@ import time
 facts = json.load(open(os.path.join(os.path.dirname(__file__), 'base.json')))
 packages = json.load(open(os.path.join(os.path.dirname(__file__), 'packages.json')))
 
+REQUEST_DELAY = 10
+MAX_ATTEMPTS = 720
+
 def generate_uuid():
 
     uuid_obj = uuid.uuid1()

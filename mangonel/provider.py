@@ -7,7 +7,7 @@ import sys
 import time
 
 try:
-    from katello.client.api.provider import ProviderAPI    
+    from katello.client.api.provider import ProviderAPI
 except ImportError, e:
     print "Please install Katello CLI package."
     sys.exit(-1)
@@ -15,7 +15,7 @@ except ImportError, e:
 
 class Provider():
     api = ProviderAPI()
-    
+
     def create_provider(self, org, name=None, description='Built by API', ptype='Custom', url=None):
 
         if name is None:
@@ -27,7 +27,7 @@ class Provider():
     def delete_provider(self, name):
         return self.api.delete(name)
 
-    
+
     def provider(self, pId):
         return self.api.provider(pId)
 

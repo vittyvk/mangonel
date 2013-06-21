@@ -41,6 +41,24 @@ class TestActivationKeys(BaseTest):
         self.logger.info("Test ellapsed time: %s" % self.ellapsed_time)
 
 
+    def test_get_ak_1(self):
+        "Tries to fetch an invalid activationkey."
+
+        org = self.org_api.create()
+        self.logger.debug("Created organization %s" % org['name'])
+        self.assertEqual(org, self.org_api.organization(org['name']), 'Failed to create and retrieve org.')
+
+        env1 = self.env_api.create_environment(org, 'Dev', 'Library')
+        self.logger.debug("Created environemt %s" % env1['name'])
+        self.assertEqual(env1, self.env_api.environment_by_name(org, 'Dev'))
+
+        ak1 = self.ak_api.create(env1)
+        self.logger.debug("Created activationkey %s" % ak1['name'])
+        self.assertEqual(ak1, self.ak_api.activation_key(org, ak1['id']))
+
+        self.assertRaises(ServerRequestError, lambda: self.ak_api.activation_key(org, 10000))
+
+
     def test_create_ak_1(self):
         "Creates a new activationkey with no content."
 

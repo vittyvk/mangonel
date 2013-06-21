@@ -47,6 +47,7 @@ class Organization():
 
 
     def organization(self, name):
+
         return self.api.organization(name)
 
 
@@ -55,4 +56,16 @@ class Organization():
 
 
     def pools(self, name):
-        return self.api.pools(name)
+        #TODO: Remove this loop once we can figure out what delays the
+        #population of pools by candlepin
+
+        for i in range(MAX_ATTEMPTS):
+            pools = self.api.pools(name)
+            if len(pools) > 0:
+                break
+            print "Fetching pools..."
+            time.sleep(REQUEST_DELAY)
+        else:
+            pools = []
+
+        return pools
