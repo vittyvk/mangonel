@@ -7,7 +7,7 @@ Performance and scalability tool for [Katello](http://katello.org).
 Examples
 --------
 
-Running from the command line:
+Running one test suite from the command line:
 
 ```bash
 $ python mangonel_runner -s my.katello.com -u admin -p admin -t tests.test_Organizations --verbose 3
@@ -25,13 +25,31 @@ Ran 3 tests in 7.699s
 OK
 ```
 
-You can also use unittest directly, as long as you provide the required arguments using environmental variables:
+Running multiple test suites from the command line:
 
 ```bash
-$ HOST=my.katello.com USERNAME=admin PASSWORD=admin PROJECT=katello python -m unittest tests.test_Organizations
-...
+$ python mangonel_runner -s my.katello.com -u admin -p admin -t tests.test_Organizations tests.test_ActivationKeys --verbose 3
+.
+.
+.
+.
+.
+.
+.
 ----------------------------------------------------------------------
-Ran 3 tests in 9.359s
+Ran 7 tests in 38.711s
+
+OK
+```
+
+Running individual tests from a test suite from the command line:
+
+```bash
+$ python mangonel_runner -s my.katello.com -u admin -p admin -t tests.test_Organizations.TestOrganizations.test_create_org1 tests.test_Organizations.TestOrganizations.test_create_org2 --verbose 4
+.
+.
+----------------------------------------------------------------------
+Ran 2 tests in 2.815s
 
 OK
 ```
