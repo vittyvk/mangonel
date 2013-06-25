@@ -6,6 +6,7 @@ import sys
 import unittest
 
 
+
 if __name__ == "__main__":
 
     prog = "Mangonel"
@@ -22,7 +23,7 @@ if __name__ == "__main__":
     parser.add_argument('--project', type=str, dest='project', default='/katello', help='Project can be either "katello" or "headpin"')
     parser.add_argument('--port', type=str, dest='port', default='443', help='Server port, defaults to 443')
     parser.add_argument('-t', '--tests', type=str, nargs='+', help='The name of the tests to be run.')
-    parser.add_argument('--verbose', type=int, dest='verbose', default=1, help='Debug verbosity level')
+    parser.add_argument('--verbose', type=int, dest='verbose', choices=range(1,6), default=3, help='Debug verbosity level')
 
     [args, ignored_args] = parser.parse_known_args()
 
@@ -36,6 +37,7 @@ if __name__ == "__main__":
         os.environ['PASSWORD'] = args.password
         os.environ['PROJECT'] = args.project
         os.environ['PORT'] = args.port
+        os.environ['VERBOSITY'] = str(args.verbose)
 
     loader = unittest.TestLoader()
     suite = unittest.TestSuite()
