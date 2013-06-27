@@ -1,0 +1,94 @@
+from basetest import BaseTest
+
+from katello.client.server import ServerRequestError
+
+from mangonel.environment import Environment
+from mangonel.organization import Organization
+from mangonel.system import System
+from mangonel.systemgroup import SystemGroup
+from mangonel.server import Server
+
+import time
+import unittest
+
+class TestSystemGroups(BaseTest):
+
+    def setUp(self):
+        BaseTest.setUp(self)
+
+        self.server = Server(host=self.host,
+                       project=self.project,
+                       username=self.user,
+                       password=self.password,
+                       port=self.port)
+        self.org_api = Organization()
+        self.env_api = Environment()
+        self.sys_api = System()
+        self.sys_grp_api = SystemGroup()
+
+        self.start_time = time.time()
+
+
+    def tearDown(self):
+        self.server = None
+
+        self.ellapsed_time = time.time() - self.start_time
+        self.logger.info("Test ellapsed time: %s" % self.ellapsed_time)
+
+
+    def _create_org_env(self):
+        "Generic method to create a new organization and one environment"
+
+        org = self.org_api.create()
+        self.logger.debug("Created organization %s" % org['name'])
+        self.assertEqual(org, self.org_api.organization(org['name']), 'Failed to create and retrieve org.')
+
+        env = self.env_api.create_environment(org, 'Dev', 'Library')
+        self.logger.debug("Created environemt %s" % env['name'])
+        self.assertEqual(env, self.env_api.environment_by_name(org, 'Dev'))
+
+        return (org, env)
+
+
+    def test_create_system_group_1(self):
+        "Creates an empty system group."
+
+        (org, env) = self._create_org_env()
+
+        grp = self.sys_grp_api.create(org)
+        self.assertEqual(grp, self.sys_grp_api.system_group(org, grp['id']))
+        self.logger.debug("Created system group '%s'" % grp['name'])
+
+
+    def test_create_and_delete_system_group_1(self):
+        "Creates an empty system group and deletes it."
+
+        (org, env) = self._create_org_env()
+
+        grp = self.sys_grp_api.create(org)
+        self.assertEqual(grp, self.sys_grp_api.system_group(org, grp['id']))
+        self.logger.debug("Created system group '%s'" % grp['name'])
+
+        self.sys_grp_api.delete(org, grp['id'])
+        self.assertRaises(ServerRequestError, lambda: self.sys_grp_api.system_group(org, grp['id']))
+        self.logger.debug("Deleted system group '%s'" % grp['name'])
+
+
+    def test_create_system_group_with_system_1(self):
+        ""
+        (org, env) = self._create_org_env()
+
+        grp = self.sys_grp_api.create(org)
+        self.assertEqual(grp, self.sys_grp_api.system_group(org, grp['id']))
+        self.logger.debug("Created system group '%s'" % grp['name'])
+
+        sys1 = self.sys_api.create_system(org, env)
+        self.logger.debug("Created system %s" % sys1['uuid'])
+        self.assertEqual(sys1['uuid'], self.sys_api.system(sys1['uuid'])['uuid'])
+
+        self.assertEqual(len(self.sys_grp_api.system_group_systems(org, grp['id'])), 0)
+        self.logger.debug("System group '%s' is empty" % grp['name'])
+
+        self.sys_grp_api.add_systems(org, grp['id'], [sys1['uuid'],])
+        self.assertEqual(len(self.sys_grp_api.system_group_systems(org, grp['id'])), 1)
+        self.logger.debug("System group '%s' is not empty" % grp['name'])
