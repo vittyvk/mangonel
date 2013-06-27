@@ -19,6 +19,10 @@ class SystemGroup():
     api = SystemGroupAPI()
 
 
+    def system_groups(self, org):
+        return self.api.system_groups(org['label'])
+
+
     def system_group(self, org, system_group_id, query=None):
         return self.api.system_group(org['label'], system_group_id, query)
 
