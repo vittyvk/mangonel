@@ -2,6 +2,7 @@ from basetest import BaseTest
 
 from katello.client.server import ServerRequestError
 
+from mangonel.common import queued_work
 from mangonel.environment import Environment
 from mangonel.organization import Organization
 from mangonel.system import System
@@ -10,7 +11,7 @@ from mangonel.server import Server
 import time
 import unittest
 
-class TestOrganizations(BaseTest):
+class TestSystems(BaseTest):
 
     def setUp(self):
         BaseTest.setUp(self)
@@ -56,3 +57,25 @@ class TestOrganizations(BaseTest):
         sys1 = self.sys_api.create_system(org, env)
         self.logger.debug("Created system %s" % sys1['uuid'])
         self.assertEqual(sys1['uuid'], self.sys_api.system(sys1['uuid'])['uuid'])
+
+
+    def test_stress_systems_1(self):
+        "Creates a new organization with environment and registers several systems."
+
+        org = self.org_api.create()
+        self.logger.debug("Created organization %s" % org['name'])
+        self.assertEqual(org, self.org_api.organization(org['name']), 'Failed to create and retrieve org.')
+
+        env = self.env_api.create_environment(org, 'Dev', 'Library')
+        self.logger.debug("Created environemt %s" % env['name'])
+        self.assertEqual(env, self.env_api.environment_by_name(org, 'Dev'))
+
+        env = self.env_api.create_environment(org, 'Testing', 'Dev')
+        self.logger.debug("Created environemt %s" % env['name'])
+        self.assertEqual(env, self.env_api.environment_by_name(org, 'Testing'))
+
+        env = self.env_api.create_environment(org, 'Release', 'Testing')
+        self.logger.debug("Created environemt %s" % env['name'])
+        self.assertEqual(env, self.env_api.environment_by_name(org, 'Release'))
+
+        queued_work(self.sys_api.create_system, org, env, 128, 2)

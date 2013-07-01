@@ -5,11 +5,41 @@ import string
 import uuid
 import time
 
+from threading import Thread
+from Queue import Queue
+
 facts = json.load(open(os.path.join(os.path.dirname(__file__), 'base.json')))
 packages = json.load(open(os.path.join(os.path.dirname(__file__), 'packages.json')))
 
 REQUEST_DELAY = 10
 MAX_ATTEMPTS = 720
+
+def queued_work(worker_method, org, env, max_systems, num_threads):
+    def worker():
+         while True:
+             size = q.qsize()
+             if (size % num_threads) == 0 and size != 0:
+                 print "%s items left to process" % size
+             item = q.get()
+             try:
+                 return_list.append(worker_method(item))
+             except Exception, e:
+                 print "Exception from worker: %s" % e
+
+    q = Queue()
+    return_list = []
+
+    for i in range(num_threads):
+        t = Thread(target=worker)
+        t.daemon = True
+        t.start()
+
+    for i in range(0, max_systems):
+        q.put(org, env)
+
+    q.join()
+
+    return return_list
 
 def generate_uuid():
 

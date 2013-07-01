@@ -87,7 +87,7 @@ class TestStress(BaseTest):
         self.logger.debug("Created Content View Definition CVD1")
         prods = self.cvd_api.update_products(org, cvd['id'], prd)
         self.logger.debug("Added %s to Content View Definition" % prd['name'])
-        
+
         # Published Content view
         self.cvd_api.publish(org, cvd['id'], 'PublishedCVD1')
         pcvd = self.cv_api.content_views_by_label_name_or_id(org, name='PublishedCVD1')
@@ -102,7 +102,7 @@ class TestStress(BaseTest):
 
         system_time = time.time()
         pools = self.org_api.pools(org['label'])
-        
+
         for idx in range(128):
             sys1 = self.sys_api.create_system(org, env1)
             self.logger.debug("Created system %s" % sys1['uuid'])
