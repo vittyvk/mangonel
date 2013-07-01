@@ -2,6 +2,8 @@ from basetest import BaseTest
 
 from katello.client.server import ServerRequestError
 
+from mangonel.common import queued_work
+
 from mangonel.changeset import Changeset
 from mangonel.contentview import ContentView
 from mangonel.contentviewdefinition import ContentViewDefinition
@@ -103,9 +105,8 @@ class TestStress(BaseTest):
         system_time = time.time()
         pools = self.org_api.pools(org['label'])
 
-        for idx in range(128):
-            sys1 = self.sys_api.create_system(org, env1)
-            self.logger.debug("Created system %s" % sys1['uuid'])
+        all_systems = queued_work(self.sys_api.create_system, org, env1, 128, 2)
+        for sys1 in all_systems:
             self.assertEqual(sys1['uuid'], self.sys_api.system(sys1['uuid'])['uuid'])
 
             for pool in pools:

@@ -1,4 +1,5 @@
 import json
+import logging
 import os
 import random
 import string
@@ -7,6 +8,9 @@ import time
 
 from threading import Thread
 from Queue import Queue
+
+
+logger = logging.getLogger("mangonel")
 
 facts = json.load(open(os.path.join(os.path.dirname(__file__), 'base.json')))
 packages = json.load(open(os.path.join(os.path.dirname(__file__), 'packages.json')))
@@ -19,12 +23,14 @@ def queued_work(worker_method, org, env, max_systems, num_threads):
          while True:
              size = q.qsize()
              if (size % num_threads) == 0 and size != 0:
-                 print "%s items left to process" % size
+                 logger.debug("%s items left to process" % size)
              item = q.get()
              try:
-                 return_list.append(worker_method(item))
+                 return_list.append(worker_method(org, env))
              except Exception, e:
-                 print "Exception from worker: %s" % e
+                logger.debug("Exception from worker: %s" % e)
+
+             q.task_done()
 
     q = Queue()
     return_list = []
@@ -38,6 +44,8 @@ def queued_work(worker_method, org, env, max_systems, num_threads):
         q.put(org, env)
 
     q.join()
+
+    logger.debug("queue work is complete, returning %s items" % len(return_list))
 
     return return_list
 

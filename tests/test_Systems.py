@@ -60,7 +60,7 @@ class TestSystems(BaseTest):
 
 
     def test_stress_systems_1(self):
-        "Creates a new organization with environment and registers several systems."
+        "Creates a new organization with environment and registers 12 systems 2 at a time."
 
         org = self.org_api.create()
         self.logger.debug("Created organization %s" % org['name'])
@@ -78,4 +78,7 @@ class TestSystems(BaseTest):
         self.logger.debug("Created environemt %s" % env['name'])
         self.assertEqual(env, self.env_api.environment_by_name(org, 'Release'))
 
-        queued_work(self.sys_api.create_system, org, env, 128, 2)
+        all_systems = queued_work(self.sys_api.create_system, org, env, 12, 2)
+
+        for sys1 in all_systems:
+            self.assertEqual(sys1['uuid'], self.sys_api.system(sys1['uuid'])['uuid'])

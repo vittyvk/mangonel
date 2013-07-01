@@ -25,7 +25,11 @@ class System():
         if facts is None:
             facts = generate_facts(name)
 
-        return self.api.register(name, org['label'], env['id'], ak, type, release, sla, facts, view_id, installed_products)
+        sys1 = self.api.register(name, org['label'], env['id'], ak, type, release, sla, facts, view_id, installed_products)
+
+        logger.debug("Created system '%s'" % sys1['name'])
+
+        return sys1
 
 
     def get_or_create_system(self, org, env, name=None, ak=None, type='system',
