@@ -1,0 +1,3 @@
+katello-cli
+kerberos
+M2Crypto
