@@ -4,7 +4,6 @@ from common import *
 
 import datetime
 import json
-import requests
 import sys
 import time
 
