@@ -117,7 +117,7 @@ class TestCSVPopulate(BaseTest):
             facts['virt.is_guest'] = False
         facts['cpu.core(s)_per_socket'] = row['Cores']
         facts['cpu.cpu_socket(s)'] = row['Sockets']
-        facts['memory.memtotal'] = int(row['RAM']) * 1048576
+        facts['memory.memtotal'] = row['RAM'] + 'GB'
         facts['uname.machine'] = row['Arch']
         [facts['distribution.name'], facts['distribution.version']] = row['OS'].split(' ')
 
