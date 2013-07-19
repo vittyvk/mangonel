@@ -119,7 +119,10 @@ class TestCSVPopulate(BaseTest):
         facts['cpu.cpu_socket(s)'] = row['Sockets']
         facts['memory.memtotal'] = row['RAM'] + 'GB'
         facts['uname.machine'] = row['Arch']
-        [facts['distribution.name'], facts['distribution.version']] = row['OS'].split(' ')
+	if row['OS'].find(' ') != -1:
+	    [facts['distribution.name'], facts['distribution.version']] = row['OS'].split(' ')
+        else:
+            facts['distribution.name'], facts['distribution.version'] = ('RHEL', row['OS'])
 
         installed_products = []
         if row['Products']:

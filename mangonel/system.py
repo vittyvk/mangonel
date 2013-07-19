@@ -77,3 +77,9 @@ class System():
 
     def subscribe(self, sId, pool=None, qty=1):
         return self.api.subscribe(sId, pool, qty)
+
+    def systems_by_org(self, org_label):
+        return self.api.systems_by_org(org_label)
+
+    def refresh_subscriptions(self, system_uuid):
+        return self.api.refresh_subscriptions(system_uuid)
