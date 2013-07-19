@@ -48,16 +48,15 @@ class TestActivationKeys(BaseTest):
         self.logger.debug("Created organization %s" % org['name'])
         self.assertEqual(org, self.org_api.organization(org['name']), 'Failed to create and retrieve org.')
 
-        env1 = self.env_api.create_environment(org, 'Dev', 'Library')
+        env1 = self.env_api.create(org, 'Dev', 'Library')
         self.logger.debug("Created environemt %s" % env1['name'])
-        self.assertEqual(env1, self.env_api.environment_by_name(org, 'Dev'))
+        self.assertEqual(env1, self.env_api.environment_by_name(org['label'], 'Dev'))
 
         ak1 = self.ak_api.create(env1)
         self.logger.debug("Created activationkey %s" % ak1['name'])
         self.assertEqual(ak1, self.ak_api.activation_key(org, ak1['id']))
 
         self.assertRaises(ServerRequestError, lambda: self.ak_api.activation_key(org, 10000))
-
 
     def test_create_ak_1(self):
         "Creates a new activationkey with no content."
@@ -66,9 +65,9 @@ class TestActivationKeys(BaseTest):
         self.logger.debug("Created organization %s" % org['name'])
         self.assertEqual(org, self.org_api.organization(org['name']), 'Failed to create and retrieve org.')
 
-        env1 = self.env_api.create_environment(org, 'Dev', 'Library')
+        env1 = self.env_api.create(org, 'Dev', 'Library')
         self.logger.debug("Created environemt %s" % env1['name'])
-        self.assertEqual(env1, self.env_api.environment_by_name(org, 'Dev'))
+        self.assertEqual(env1, self.env_api.environment_by_name(org['label'], 'Dev'))
 
         ak1 = self.ak_api.create(env1)
         self.logger.debug("Created activationkey %s" % ak1['name'])
@@ -83,25 +82,25 @@ class TestActivationKeys(BaseTest):
         self.logger.debug("Created organization %s" % org['name'])
         self.assertEqual(org, self.org_api.organization(org['name']), 'Failed to create and retrieve org.')
 
-        env1 = self.env_api.create_environment(org, 'Dev', 'Library')
+        env1 = self.env_api.create(org, 'Dev', 'Library')
         self.logger.debug("Created environemt %s" % env1['name'])
-        self.assertEqual(env1, self.env_api.environment_by_name(org, 'Dev'))
+        self.assertEqual(env1, self.env_api.environment_by_name(org['label'], 'Dev'))
 
         ak1 = self.ak_api.create(env1)
         self.logger.debug("Created activationkey %s" % ak1['name'])
         self.assertEqual(ak1, self.ak_api.activation_key(org, ak1['id']))
 
-        prv = self.prv_api.create_provider(org, 'Provider1')
+        prv = self.prv_api.create(org, 'Provider1')
         self.logger.debug("Created custom provider Provider1")
         self.assertEqual(prv, self.prv_api.provider(prv['id']))
 
-        prd = self.prd_api.create_product(prv, 'Product1')
+        prd = self.prd_api.create(prv, 'Product1')
         self.logger.debug("Created product Product1")
         self.assertEqual(prd['id'], self.prd_api.product(org, prd['id'])['id'])
 
-        repo = self.repo_api.create_repository(org, prd, 'http://hhovsepy.fedorapeople.org/fakerepos/zoo4/', 'Repo1')
+        repo = self.repo_api.create(org, prd, 'http://hhovsepy.fedorapeople.org/fakerepos/zoo4/', 'Repo1')
         self.logger.debug("Created repositiry Repo1")
-        self.assertEqual(repo, self.repo_api.repository(repo['id']))
+        self.assertEqual(repo, self.repo_api.repo(repo['id']))
 
         # Sync
         self.prv_api.sync(prv['id'])

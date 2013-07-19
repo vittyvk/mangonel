@@ -35,7 +35,6 @@ class TestSystemGroups(BaseTest):
         self.ellapsed_time = time.time() - self.start_time
         self.logger.info("Test ellapsed time: %s" % self.ellapsed_time)
 
-
     def _create_org_env(self):
         "Generic method to create a new organization and one environment"
 
@@ -43,14 +42,13 @@ class TestSystemGroups(BaseTest):
         self.logger.debug("Created organization %s" % org['name'])
         self.assertEqual(org, self.org_api.organization(org['name']), 'Failed to create and retrieve org.')
 
-        env = self.env_api.create_environment(org, 'Dev', 'Library')
+        env = self.env_api.create(org, 'Dev', 'Library')
         self.logger.debug("Created environemt %s" % env['name'])
-        self.assertEqual(env, self.env_api.environment_by_name(org, 'Dev'))
+        self.assertEqual(env, self.env_api.environment_by_name(org['label'], 'Dev'))
 
         return (org, env)
 
-
-    def test_create_system_group_1(self):
+    def test_create_group_1(self):
         "Creates an empty system group."
 
         (org, env) = self._create_org_env()
@@ -58,7 +56,6 @@ class TestSystemGroups(BaseTest):
         grp = self.sys_grp_api.create(org)
         self.assertEqual(grp, self.sys_grp_api.system_group(org, grp['id']))
         self.logger.debug("Created system group '%s'" % grp['name'])
-
 
     def test_create_and_delete_system_group_1(self):
         "Creates an empty system group and deletes it."
@@ -72,7 +69,6 @@ class TestSystemGroups(BaseTest):
         self.sys_grp_api.delete(org, grp['id'])
         self.assertRaises(ServerRequestError, lambda: self.sys_grp_api.system_group(org, grp['id']))
         self.logger.debug("Deleted system group '%s'" % grp['name'])
-
 
     def test_create_and_copy_system_group_1(self):
         "Creates system group and copies it."
@@ -88,7 +84,7 @@ class TestSystemGroups(BaseTest):
         self.assertEqual(len(self.sys_grp_api.system_groups(org)), 2)
 
 
-    def test_create_system_group_with_system_1(self):
+    def test_create_group_with_system_1(self):
         "Creates system group and adds a system to it."
         (org, env) = self._create_org_env()
 
@@ -96,7 +92,7 @@ class TestSystemGroups(BaseTest):
         self.assertEqual(grp, self.sys_grp_api.system_group(org, grp['id']))
         self.logger.debug("Created system group '%s'" % grp['name'])
 
-        sys1 = self.sys_api.create_system(org, env)
+        sys1 = self.sys_api.create(org, env)
         self.logger.debug("Created system %s" % sys1['uuid'])
         self.assertEqual(sys1['uuid'], self.sys_api.system(sys1['uuid'])['uuid'])
 
@@ -108,7 +104,7 @@ class TestSystemGroups(BaseTest):
         self.logger.debug("System group '%s' is not empty" % grp['name'])
 
 
-    def test_create_system_group_with_system_and_delete_1(self):
+    def test_create_group_with_system_and_delete_1(self):
         "Creates system group and adds a system to it."
         (org, env) = self._create_org_env()
 
@@ -116,7 +112,7 @@ class TestSystemGroups(BaseTest):
         self.assertEqual(grp, self.sys_grp_api.system_group(org, grp['id']))
         self.logger.debug("Created system group '%s'" % grp['name'])
 
-        sys1 = self.sys_api.create_system(org, env)
+        sys1 = self.sys_api.create(org, env)
         self.logger.debug("Created system %s" % sys1['uuid'])
         self.assertEqual(sys1['uuid'], self.sys_api.system(sys1['uuid'])['uuid'])
         self.assertEqual(len(self.sys_grp_api.system_group_systems(org, grp['id'])), 0)
@@ -131,7 +127,7 @@ class TestSystemGroups(BaseTest):
         self.logger.debug("System group '%s' is empty" % grp['name'])
 
 
-    def test_create_system_group_with_system_and_copy_1(self):
+    def test_create_group_with_system_and_copy_1(self):
         "Creates system group, adds a system to it and copies it."
         (org, env) = self._create_org_env()
 
@@ -139,7 +135,7 @@ class TestSystemGroups(BaseTest):
         self.assertEqual(grp1, self.sys_grp_api.system_group(org, grp1['id']))
         self.logger.debug("Created system group '%s'" % grp1['name'])
 
-        sys1 = self.sys_api.create_system(org, env)
+        sys1 = self.sys_api.create(org, env)
         self.logger.debug("Created system %s" % sys1['uuid'])
         self.assertEqual(sys1['uuid'], self.sys_api.system(sys1['uuid'])['uuid'])
 

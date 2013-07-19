@@ -55,27 +55,27 @@ class TestStress(BaseTest):
         self.logger.debug("Created organization %s" % org['name'])
         self.assertEqual(org, self.org_api.organization(org['name']), 'Failed to create and retrieve org.')
 
-        env1 = self.env_api.create_environment(org, 'Dev', 'Library')
+        env1 = self.env_api.create(org, 'Dev', 'Library')
         self.logger.debug("Created environmemt %s" % env1['name'])
         self.assertEqual(env1, self.env_api.environment_by_name(org, 'Dev'))
 
-        env2 = self.env_api.create_environment(org, 'Testing', 'Dev')
+        env2 = self.env_api.create(org, 'Testing', 'Dev')
         self.logger.debug("Created environmemt %s" % env2['name'])
         self.assertEqual(env2, self.env_api.environment_by_name(org, 'Testing'))
 
-        env3 = self.env_api.create_environment(org, 'Release', 'Testing')
+        env3 = self.env_api.create(org, 'Release', 'Testing')
         self.logger.debug("Created environmemt %s" % env3['name'])
         self.assertEqual(env3, self.env_api.environment_by_name(org, 'Release'))
 
-        prv = self.prv_api.create_provider(org, 'Provider1')
+        prv = self.prv_api.create(org, 'Provider1')
         self.logger.debug("Created custom provider Provider1")
         self.assertEqual(prv, self.prv_api.provider(prv['id']))
 
-        prd = self.prd_api.create_product(prv, 'Product1')
+        prd = self.prd_api.create(prv, 'Product1')
         self.logger.debug("Created product Product1")
         self.assertEqual(prd['id'], self.prd_api.product(org, prd['id'])['id'])
 
-        repo = self.repo_api.create_repository(org, prd, 'http://hhovsepy.fedorapeople.org/fakerepos/zoo4/', 'Repo1')
+        repo = self.repo_api.create(org, prd, 'http://hhovsepy.fedorapeople.org/fakerepos/zoo4/', 'Repo1')
         self.logger.debug("Created repositiry Repo1")
         self.assertEqual(repo, self.repo_api.repository(repo['id']))
 
@@ -85,7 +85,7 @@ class TestStress(BaseTest):
         self.logger.debug("Finished synchronizing Provider1")
 
         # Content View Definition
-        cvd = self.cvd_api.create_content_view_definition(org, 'CVD1')
+        cvd = self.cvd_api.create(org, 'CVD1')
         self.logger.debug("Created Content View Definition CVD1")
         prods = self.cvd_api.update_products(org, cvd['id'], prd)
         self.logger.debug("Added %s to Content View Definition" % prd['name'])
@@ -105,7 +105,7 @@ class TestStress(BaseTest):
         system_time = time.time()
         pools = self.org_api.pools(org['label'])
 
-        all_systems = queued_work(self.sys_api.create_system, org, env1, 128, 2)
+        all_systems = queued_work(self.sys_api.create, org, env1, 128, 2)
         for sys1 in all_systems:
             self.assertEqual(sys1['uuid'], self.sys_api.system(sys1['uuid'])['uuid'])
 

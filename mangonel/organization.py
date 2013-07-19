@@ -13,8 +13,10 @@ except ImportError, e:
     sys.exit(-1)
 
 
-class Organization():
-    api = OrganizationAPI()
+class Organization(OrganizationAPI):
+
+    def __init__(self):
+        super(Organization, self).__init__()
 
     def create(self, name=None, label=None, description=None):
 
@@ -27,12 +29,11 @@ class Organization():
         if description is None:
             description = "Generated automatically."
 
-        return self.api.create(name, label, description)
-
+        return super(Organization, self).create(name, label, description)
 
     def get_or_create_org(self, name=None, label=None, description=None):
         try:
-            org = self.api.organization(label)
+            org = self.organization(label)
         except server.ServerRequestError, e:
             if e[1]['displayMessage'] != "Couldn't find organization '%s'" % label:
                 raise(e)
@@ -40,29 +41,15 @@ class Organization():
 
         return org
 
-
-    def delete(self, name):
-        return self.api.delete(name)
-
-
-    def organization(self, name):
-
-        return self.api.organization(name)
-
-
-    def organizations(self):
-        return self.api.organizations()
-
-
     def pools(self, name):
         #TODO: Remove this loop once we can figure out what delays the
         #population of pools by candlepin
 
         for i in range(MAX_ATTEMPTS):
-            pools = self.api.pools(name)
+            pools = super(Organization, self).pools(name)
             if len(pools) > 0:
                 break
-            print "Fetching pools..."
+            logger.debug("Fetching pools...")
             time.sleep(REQUEST_DELAY)
         else:
             pools = []

@@ -12,34 +12,32 @@ except ImportError, e:
     sys.exit(-1)
 
 
-class Provider():
-    api = ProviderAPI()
+class Provider(ProviderAPI):
 
-    def create_provider(self, org, name=None, description='Built by API', ptype='Custom', url=None):
+    def __init__(self):
+        super(Provider, self).__init__()
+
+    def create(self, org, name=None, description='Built by API', ptype='Custom', url=None):
 
         if name is None:
             name = generate_name(8)
 
-        return self.api.create(name, org['label'], description, ptype, url)
+        return super(Provider, self).create(name, org['label'], description, ptype, url)
 
-
-    def delete_provider(self, name):
-        return self.api.delete(name)
-
+    def delete(self, name):
+        return super(Provider, self).delete(name)
 
     def provider(self, pId):
-        return self.api.provider(pId)
-
+        return super(Provider, self).provider(pId)
 
     def providers_by_org(self, org):
-        return self.api.providers_by_org(org['label'])
-
+        return super(Provider, self).providers_by_org(org['label'])
 
     def sync(self, pId):
-        task = self.api.sync(pId)[0]
+        task = super(Provider, self).sync(pId)[0]
 
         while task['state'] != 'finished':
-            print "Synchronizing..."
-            task = self.api.last_sync_status(pId)
+            logger.debug("Synchronizing...")
+            task = super(Provider, self).last_sync_status(pId)
 
         return task

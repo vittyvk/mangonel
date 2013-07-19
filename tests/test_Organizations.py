@@ -58,9 +58,9 @@ class TestOrganizations(BaseTest):
         self.logger.debug("Created organization %s" % org['name'])
         self.assertEqual(org, self.org_api.organization(org['name']), 'Failed to create and retrieve org.')
 
-        env = self.env_api.create_environment(org, 'Dev', 'Library')
+        env = self.env_api.create(org, 'Dev', 'Library')
         self.logger.debug("Created environemt %s" % env['name'])
-        self.assertEqual(env, self.env_api.environment_by_name(org, 'Dev'))
+        self.assertEqual(env, self.env_api.environment_by_name(org['label'], 'Dev'))
 
 
     def test_create_org4(self):
@@ -70,14 +70,14 @@ class TestOrganizations(BaseTest):
         self.logger.debug("Created organization %s" % org['name'])
         self.assertEqual(org, self.org_api.organization(org['name']), 'Failed to create and retrieve org.')
 
-        env = self.env_api.create_environment(org, 'Dev', 'Library')
+        env = self.env_api.create(org, 'Dev', 'Library')
         self.logger.debug("Created environemt %s" % env['name'])
-        self.assertEqual(env, self.env_api.environment_by_name(org, 'Dev'))
+        self.assertEqual(env, self.env_api.environment_by_name(org['label'], 'Dev'))
 
-        env = self.env_api.create_environment(org, 'Testing', 'Dev')
+        env = self.env_api.create(org, 'Testing', 'Dev')
         self.logger.debug("Created environemt %s" % env['name'])
-        self.assertEqual(env, self.env_api.environment_by_name(org, 'Testing'))
+        self.assertEqual(env, self.env_api.environment_by_name(org['label'], 'Testing'))
 
-        env = self.env_api.create_environment(org, 'Release', 'Testing')
+        env = self.env_api.create(org, 'Release', 'Testing')
         self.logger.debug("Created environemt %s" % env['name'])
-        self.assertEqual(env, self.env_api.environment_by_name(org, 'Release'))
+        self.assertEqual(env, self.env_api.environment_by_name(org['label'], 'Release'))

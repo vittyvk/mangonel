@@ -7,15 +7,17 @@ import time
 
 try:
     from katello.client.api.task_status import TaskStatusAPI
-    from katello.client.api.changeset import ChangesetAPI    
+    from katello.client.api.changeset import ChangesetAPI
 except ImportError, e:
     print "Please install Katello CLI package."
     sys.exit(-1)
 
 
-class Changeset():
+class Changeset(ChangesetAPI):
     task_api = TaskStatusAPI()
-    api = ChangesetAPI()
+
+    def __init__(self):
+        super(Changeset, self).__init__()
 
     def create(self, org, env, name=None, type_in='promotion', description=None):
 
@@ -25,27 +27,16 @@ class Changeset():
         if description is None:
             description = "Promoted on %s" % datetime.datetime.now().strftime("%Y-%m-%d-%H-%M-%S")
 
-        return self.api.create(org['label'], env['id'], name, type_in, description)
-
-
-    def delete(self, chsId):
-        return self.api.delete(chsId)
-
-    
-    def changeset(self, chsId):
-        return self.api.changeset(chsId)
-
+        return super(Changeset, self).create(org['label'], env['id'], name, type_in, description)
 
     def changeset_by_name(self, org, env, name):
-        return self.api.changeset_by_name(org['label'], env['id'], name)
-
+        return super(Changeset, self).changeset_by_name(org['label'], env['id'], name)
 
     def add_content(self, chsId, content, contentType='content_views'):
-        return self.api.add_content(chsId, contentType, {'content_view_id' : content['id'] })
-
+        return super(Changeset, self).add_content(chsId, contentType, {'content_view_id' : content['id'] })
 
     def apply(self, chsId):
-        applyTask = self.api.apply(chsId)
+        applyTask = self.apply(chsId)
 
         task = self.task_api.status(applyTask['uuid'])
         while task['state'] != 'finished':

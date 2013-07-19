@@ -14,8 +14,10 @@ except ImportError, e:
     sys.exit(-1)
 
 
-class ActivationKey():
-    api = ActivationKeyAPI()
+class ActivationKey(ActivationKeyAPI):
+
+    def __init__(self):
+        super(ActivationKey, self).__init__()
 
     def create(self, env, name=None, description=None, limit=-1, cvId=None):
 
@@ -25,19 +27,18 @@ class ActivationKey():
         if description is None:
             description = "Generated automatically."
 
-        return self.api.create(env['id'], name, description, limit, cvId)
-
+        return super(ActivationKey, self).create(env['id'], name, description, limit, cvId)
 
     def delete(self, org, akId):
-        return self.api.delete(org['label'], akId)
+        return super(ActivationKey, self).delete(org['label'], akId)
 
 
     def activation_key(self, org, akId):
-        return self.api.activation_key(org['label'], akId)
+        return super(ActivationKey, self).activation_key(org['label'], akId)
 
 
     def add_pool(self, org, akId, poolId):
-        return self.api.add_pool(org['label'], akId, poolId)
+        return super(ActivationKey, self).add_pool(org['label'], akId, poolId)
 
 
     def has_pool(self, org, akId, poolId):
@@ -49,12 +50,12 @@ class ActivationKey():
 
 
     def remove_pool(self, org, akId, poolId):
-        return self.api.remove_pool(org['label'], akId, poolId)
+        return super(ActivationKey, self).remove_pool(org['label'], akId, poolId)
 
 
     def add_system_group(self, org, akId, sgId):
-        return self.api.add_pool(org['label'], akId, sgId)
+        return super(ActivationKey, self).add_pool(org['label'], akId, sgId)
 
 
     def remove_system_group(self, org, akId, sgId):
-        return self.api.remove_pool(org['label'], akId, sgId)
+        return super(ActivationKey, self).remove_pool(org['label'], akId, sgId)

@@ -35,26 +35,26 @@ class TestSystems(BaseTest):
         self.logger.info("Test ellapsed time: %s" % self.ellapsed_time)
 
 
-    def test_create_system_1(self):
+    def test_create_1(self):
         "Creates a new organization with environment and register a system."
 
         org = self.org_api.create()
         self.logger.debug("Created organization %s" % org['name'])
         self.assertEqual(org, self.org_api.organization(org['name']), 'Failed to create and retrieve org.')
 
-        env = self.env_api.create_environment(org, 'Dev', 'Library')
+        env = self.env_api.create(org, 'Dev', 'Library')
         self.logger.debug("Created environemt %s" % env['name'])
-        self.assertEqual(env, self.env_api.environment_by_name(org, 'Dev'))
+        self.assertEqual(env, self.env_api.environment_by_name(org['label'], 'Dev'))
 
-        env = self.env_api.create_environment(org, 'Testing', 'Dev')
+        env = self.env_api.create(org, 'Testing', 'Dev')
         self.logger.debug("Created environemt %s" % env['name'])
-        self.assertEqual(env, self.env_api.environment_by_name(org, 'Testing'))
+        self.assertEqual(env, self.env_api.environment_by_name(org['label'], 'Testing'))
 
-        env = self.env_api.create_environment(org, 'Release', 'Testing')
+        env = self.env_api.create(org, 'Release', 'Testing')
         self.logger.debug("Created environemt %s" % env['name'])
-        self.assertEqual(env, self.env_api.environment_by_name(org, 'Release'))
+        self.assertEqual(env, self.env_api.environment_by_name(org['label'], 'Release'))
 
-        sys1 = self.sys_api.create_system(org, env)
+        sys1 = self.sys_api.create(org, env)
         self.logger.debug("Created system %s" % sys1['uuid'])
         self.assertEqual(sys1['uuid'], self.sys_api.system(sys1['uuid'])['uuid'])
 
@@ -66,19 +66,19 @@ class TestSystems(BaseTest):
         self.logger.debug("Created organization %s" % org['name'])
         self.assertEqual(org, self.org_api.organization(org['name']), 'Failed to create and retrieve org.')
 
-        env = self.env_api.create_environment(org, 'Dev', 'Library')
+        env = self.env_api.create(org, 'Dev', 'Library')
         self.logger.debug("Created environemt %s" % env['name'])
-        self.assertEqual(env, self.env_api.environment_by_name(org, 'Dev'))
+        self.assertEqual(env, self.env_api.environment_by_name(org['label'], 'Dev'))
 
-        env = self.env_api.create_environment(org, 'Testing', 'Dev')
+        env = self.env_api.create(org, 'Testing', 'Dev')
         self.logger.debug("Created environemt %s" % env['name'])
-        self.assertEqual(env, self.env_api.environment_by_name(org, 'Testing'))
+        self.assertEqual(env, self.env_api.environment_by_name(org['label'], 'Testing'))
 
-        env = self.env_api.create_environment(org, 'Release', 'Testing')
+        env = self.env_api.create(org, 'Release', 'Testing')
         self.logger.debug("Created environemt %s" % env['name'])
-        self.assertEqual(env, self.env_api.environment_by_name(org, 'Release'))
+        self.assertEqual(env, self.env_api.environment_by_name(org['label'], 'Release'))
 
-        all_systems = queued_work(self.sys_api.create_system, org, env, 12, 2)
+        all_systems = queued_work(self.sys_api.create, org, env, 12, 2)
 
         for sys1 in all_systems:
             self.assertEqual(sys1['uuid'], self.sys_api.system(sys1['uuid'])['uuid'])
