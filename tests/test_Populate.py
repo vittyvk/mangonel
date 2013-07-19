@@ -119,6 +119,7 @@ class TestCSVPopulate(BaseTest):
         facts['cpu.cpu_socket(s)'] = row['Sockets']
         facts['memory.memtotal'] = row['RAM'] + 'GB'
         facts['uname.machine'] = row['Arch']
+        facts['system.certificate_version'] = '3.2'
 	if row['OS'].find(' ') != -1:
 	    [facts['distribution.name'], facts['distribution.version']] = row['OS'].split(' ')
         else:
