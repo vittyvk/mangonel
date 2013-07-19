@@ -32,11 +32,15 @@ if __name__ == "__main__":
         parser.print_usage()
         sys.exit(-1)
     else:
-        os.environ['HOST'] = args.host
-        os.environ['USERNAME'] = args.username
-        os.environ['PASSWORD'] = args.password
+        os.environ['KATELLO_HOST'] = args.host
+        os.environ['KATELLO_USERNAME'] = args.username
+        os.environ['KATELLO_PASSWORD'] = args.password
+
+        # Make sure that PROJECT starts with leading "/"
+        if not args.project.startswith("/"): args.project = "/" + args.project
         os.environ['PROJECT'] = args.project
-        os.environ['PORT'] = args.port
+
+        os.environ['KATELLO_PORT'] = args.port
         os.environ['VERBOSITY'] = str(args.verbose)
 
     loader = unittest.TestLoader()
