@@ -88,7 +88,7 @@ class TestCSVPopulate(BaseTest):
         data = csv.DictReader(open(self.args.sys_csv))
         for row in data:
             org = self.org_api.organization(row['Org Label'])
-            env = self.env_api.environment_by_name(org, row['Environment Label'])
+            env = self.env_api.environment_by_name(org['label'], row['Environment Label'])
 
             num = 0
             total = int(row['Count'])
@@ -102,8 +102,8 @@ class TestCSVPopulate(BaseTest):
                 if row['Host']:
                     host_systems = self.set_host_guest(host_systems, org, env, sys, num, row)
 
-                self.sys_api.checkin(sys)
-                self.sys_api.api.refresh_subscriptions(sys['uuid'])
+                self.sys_api.checkin(sys['uuid'])
+                self.sys_api.refresh_subscriptions(sys['uuid'])
 
         self.assertEqual(1, 1, 'Failed')
 
@@ -120,8 +120,8 @@ class TestCSVPopulate(BaseTest):
         facts['memory.memtotal'] = row['RAM'] + 'GB'
         facts['uname.machine'] = row['Arch']
         facts['system.certificate_version'] = '3.2'
-	if row['OS'].find(' ') != -1:
-	    [facts['distribution.name'], facts['distribution.version']] = row['OS'].split(' ')
+        if row['OS'].find(' ') != -1:
+            [facts['distribution.name'], facts['distribution.version']] = row['OS'].split(' ')
         else:
             facts['distribution.name'], facts['distribution.version'] = ('RHEL', row['OS'])
 
@@ -134,7 +134,7 @@ class TestCSVPopulate(BaseTest):
         params = {}
         params['facts'] = facts
         params['installedProducts'] = installed_products
-        self.sys_api.api.update(sys['uuid'], params)
+        self.sys_api.update(sys['uuid'], params)
 
 
     def set_host_guest(self, host_systems, org, env, sys, num, row):
@@ -148,5 +148,5 @@ class TestCSVPopulate(BaseTest):
 
         params = {}
         params['guestIds'] = host_systems[host_name][1::]
-        self.sys_api.api.update(host_systems[host_name][0], params)
+        self.sys_api.update(host_systems[host_name][0], params)
         return host_systems
