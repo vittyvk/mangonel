@@ -1,3 +1,6 @@
+#!/usr/bin/env python
+# -*- encoding: utf-8 -*-
+
 from basetest import BaseTest
 
 from katello.client.server import ServerRequestError
@@ -55,21 +58,46 @@ class TestUsers(BaseTest):
         self.assertEqual(user['email'], useremail)
 
     def test_create_user_3(self):
-        "Username validation"
+        "Fail username validation"
 
         username = "user-%s" % generate_name(4)
 
-        self.assertRaises(ServerRequestError, lambda: self.user_api.create(name=' '))
-        self.assertRaises(ServerRequestError, lambda: self.user_api.create(name=' ' + username))
-        self.assertRaises(ServerRequestError, lambda: self.user_api.create(name=username + ' '))
-        self.assertRaises(ServerRequestError, lambda: self.user_api.create(name='aa'))
-        self.assertRaises(ServerRequestError, lambda: self.user_api.create(name='<bold>%s</bold>' % username))
-        self.assertRaises(ServerRequestError, lambda: self.user_api.create(name='a'*129))
+        names = [
+            " ",
+            " " + username,
+            username + " ",
+            "aa",
+            '<bold>%s</bold>' % username,
+            "a"*129]
+
+        for name in names:
+            self.assertRaises(ServerRequestError, lambda: self.user_api.create(name=name))
 
     def test_create_user_4(self):
-        "Empty username is not allowed"
+        "Success username"
 
-        self.assertRaises(ServerRequestError, lambda: self.user_api.create(name=' '))
+        names = [
+            "user-%s" % generate_name(4),
+            "user.%s" % generate_name(2),
+            "user-%s@example.com" % generate_name(4),
+            u"նոր օգտվող-%s" % generate_name(2),
+            u"新用戶-%s" % generate_name(2),
+            u"नए उपयोगकर्ता-%s" % generate_name(2),
+            u"нового пользователя-%s" % generate_name(2),
+            u"uusi käyttäjä-%s" % generate_name(2),
+            u"νέος χρήστης-%s" % generate_name(2),]
+
+        for name in names:
+            user = self.user_api.create(name=name)
+            self.assertEqual(user, self.user_api.user(user['id']))
+
+    def test_create_user_5(self):
+        "Re-creates system user."
+
+        user = self.user_api.create()
+        self.assertEqual(user, self.user_api.user(user['id']))
+
+        self.assertRaises(ServerRequestError, lambda: self.user_api.create(name=user['username']))
 
     def test_update_user_email_and_succeed_1(self):
         "Creates and updates a system user's email."
