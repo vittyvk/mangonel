@@ -33,3 +33,7 @@ class User(UserAPI):
         logger.debug("Created system user '%s'" % user['username'])
 
         return user
+
+    def update(self, user_id, pw=None, email=None, disabled=None, default_environment=None, default_locale=None):
+
+        return super(User, self).update(user_id, pw, email, disabled, default_environment, default_locale)
