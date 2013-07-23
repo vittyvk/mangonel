@@ -95,14 +95,14 @@ class TestCSVPopulate(BaseTest):
             while num < total:
                 num += 1
 
-                sys = self.sys_api.get_or_create(org, env, self.namify(row['Name'], num))
+                sys = self.sys_api.get_or_create_system(org, env, self.namify(row['Name'], num))
 
                 self.system_update(sys, num, row)
 
                 if row['Host']:
                     host_systems = self.set_host_guest(host_systems, org, env, sys, num, row)
 
-                self.sys_api.checkin(sys['uuid'])
+                self.sys_api.checkin(sys)
                 self.sys_api.refresh_subscriptions(sys['uuid'])
 
         self.assertEqual(1, 1, 'Failed')
@@ -140,7 +140,7 @@ class TestCSVPopulate(BaseTest):
     def set_host_guest(self, host_systems, org, env, sys, num, row):
         host_name = self.namify(row['Host'], num)
         if not host_name in host_systems:
-            host = self.sys_api.get_or_create(org, env, host_name)
+            host = self.sys_api.get_or_create_system(org, env, host_name)
             host_systems[host_name] = [host['uuid']]
 
         #host_systems[host_name].append(sys['uuid'])
