@@ -57,7 +57,7 @@ class TestUsers(BaseTest):
         self.assertEqual(user['username'], username)
         self.assertEqual(user['email'], useremail)
 
-    def test_create_user_3(self):
+    def test_invalid_usernames(self):
         "Fail username validation"
 
         username = "user-%s" % generate_name(4)
@@ -67,18 +67,17 @@ class TestUsers(BaseTest):
             " " + "user-%s" % generate_name(4),
             "user-%s" % generate_name(4) + " ",
             generate_name(2,2),
-             '<bold>%s</bold>' % "user-%s" % generate_name(4),
-            generate_name(129),
+            generate_name(256),
             ]
 
         for name in names:
             self.assertRaises(ServerRequestError, lambda: self.user_api.create(name=name))
 
-    def test_create_user_4(self):
+    def test_valid_usernames(self):
         "Success username"
 
         names = [
-            generate_name(128),
+            generate_name(255),
             "user-%s" % generate_name(4),
             "user.%s" % generate_name(2),
             "user-%s@example.com" % generate_name(4),
@@ -87,7 +86,11 @@ class TestUsers(BaseTest):
             u"नए उपयोगकर्ता-%s" % generate_name(2),
             u"нового пользователя-%s" % generate_name(2),
             u"uusi käyttäjä-%s" % generate_name(2),
-            u"νέος χρήστης-%s" % generate_name(2),]
+            u"νέος χρήστης-%s" % generate_name(2),
+            "foo@!#$%^&*( ) %s" % generate_name(),
+            "<blink>%s</blink>" % generate_name(),
+            "bar+{}|\"?hi %s" % generate_name(),
+            ]
 
         for name in names:
             user = self.user_api.create(name=name)
