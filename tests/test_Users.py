@@ -64,11 +64,12 @@ class TestUsers(BaseTest):
 
         names = [
             " ",
-            " " + username,
-            username + " ",
-            "aa",
-            '<bold>%s</bold>' % username,
-            "a"*129]
+            " " + "user-%s" % generate_name(4),
+            "user-%s" % generate_name(4) + " ",
+            generate_name(2,2),
+             '<bold>%s</bold>' % "user-%s" % generate_name(4),
+            generate_name(129),
+            ]
 
         for name in names:
             self.assertRaises(ServerRequestError, lambda: self.user_api.create(name=name))
@@ -77,6 +78,7 @@ class TestUsers(BaseTest):
         "Success username"
 
         names = [
+            generate_name(128),
             "user-%s" % generate_name(4),
             "user.%s" % generate_name(2),
             "user-%s@example.com" % generate_name(4),

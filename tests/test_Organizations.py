@@ -1,6 +1,10 @@
+#!/usr/bin/env python
+# -*- encoding: utf-8 -*-
+
 from basetest import BaseTest
 
 from katello.client.server import ServerRequestError
+from mangonel.common import generate_name
 
 from mangonel.environment import Environment
 from mangonel.organization import Organization
@@ -62,7 +66,6 @@ class TestOrganizations(BaseTest):
         self.logger.debug("Created environemt %s" % env['name'])
         self.assertEqual(env, self.env_api.environment_by_name(org['label'], 'Dev'))
 
-
     def test_create_org4(self):
         "Creates a new organization with several environments."
 
@@ -81,3 +84,82 @@ class TestOrganizations(BaseTest):
         env = self.env_api.create(org, 'Release', 'Testing')
         self.logger.debug("Created environemt %s" % env['name'])
         self.assertEqual(env, self.env_api.environment_by_name(org['label'], 'Release'))
+
+    def test_create_org5(self):
+        "Org name and labels are unique across the server."
+
+        org = self.org_api.create()
+        self.logger.debug("Created organization %s" % org['name'])
+        self.assertEqual(org, self.org_api.organization(org['name']), 'Failed to create and retrieve org.')
+        self.assertRaises(ServerRequestError, lambda: self.org_api.create(name=org['name'], label=org['label']))
+        self.assertRaises(ServerRequestError, lambda: self.org_api.create(name=org['name'], label=generate_name()))
+        self.assertRaises(ServerRequestError, lambda: self.org_api.create(name=generate_name(), label=org['label']))
+
+    def test_invalid_org_names(self):
+        "These organization names are not valid."
+
+        orgname = "org-invalid-%s" % generate_name(2)
+
+        org_names = [
+            " ",
+            " " + generate_name(2),
+            generate_name(2) + " ",
+            generate_name(256),
+            ]
+
+        for name in org_names:
+            self.assertRaises(ServerRequestError, lambda: self.org_api.create(name=name, label="label-%s" % generate_name(2)))
+
+    def test_valid_org_names(self):
+        "These organization names are valid."
+
+        org_names = [
+            "org-valid-%s" % generate_name(2),
+            "org-valid.%s" % generate_name(2),
+            "org-valid-%s@example.com" % generate_name(2),
+            u"նոր օգտվող-%s" % generate_name(2),
+            u"新用戶-%s" % generate_name(2),
+            u"नए उपयोगकर्ता-%s" % generate_name(2),
+            u"нового пользователя-%s" % generate_name(2),
+            u"uusi käyttäjä-%s" % generate_name(2),
+            u"νέος χρήστης-%s" % generate_name(2),
+            generate_name(1,1),
+            generate_name(255),
+            '<bold>%s</bold>' % generate_name(2),
+            ]
+
+        for name in org_names:
+            org = self.org_api.create(name=name, label="label-%s" % generate_name(2))
+            self.logger.debug("Created organization %s" % org['name'])
+            self.assertEqual(org, self.org_api.organization(org['label']))
+
+    def test_valid_org_labels(self):
+        "These organization labels are valid."
+
+        org_labels = [
+            " ",
+            None,
+            "label-invalid-%s" % generate_name(2),
+            generate_name(128),
+            '_%s' % "label-invalid-%s" % generate_name(2),
+            '%s_' % "label-invalid-%s" % generate_name(2),
+            'label_%s' % "label-invalid-%s" % generate_name(2),
+            ]
+
+        for label in org_labels:
+            org = self.org_api.create(name=generate_name(3), label=label)
+            self.logger.debug("Created organization %s" % org['name'])
+            self.assertEqual(org, self.org_api.organization(org['label']))
+
+    def test_invalid_org_labels(self):
+        "These organization labels are not valid."
+
+        org_labels = [
+            " " + "label-invalid-%s" % generate_name(2),
+            "label-invalid-%s" % generate_name(2) + " ",
+            generate_name(129),
+            '<bold>%s</bold>' % "label-invalid-%s" % generate_name(2),
+            ]
+
+        for label in org_labels:
+            self.assertRaises(ServerRequestError, lambda: self.org_api.create(name=generate_name(3), label=label))
