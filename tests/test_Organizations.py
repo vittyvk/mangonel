@@ -125,7 +125,7 @@ class TestOrganizations(BaseTest):
             u"νέος χρήστης-%s" % generate_name(2),
             generate_name(1,1),
             generate_name(255),
-            "foo@!#$%^&*( ) %s" % generate_name(),
+            "foo@!#$^&*( ) %s" % generate_name(),
             "<blink>%s</blink>" % generate_name(),
             "bar+{}|\"?hi %s" % generate_name(),
 

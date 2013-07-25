@@ -87,7 +87,7 @@ class TestUsers(BaseTest):
             u"нового пользователя-%s" % generate_name(2),
             u"uusi käyttäjä-%s" % generate_name(2),
             u"νέος χρήστης-%s" % generate_name(2),
-            "foo@!#$%^&*( ) %s" % generate_name(),
+            "foo@!#$^&*( ) %s" % generate_name(),
             "<blink>%s</blink>" % generate_name(),
             "bar+{}|\"?hi %s" % generate_name(),
             ]
