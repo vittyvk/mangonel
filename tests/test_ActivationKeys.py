@@ -3,6 +3,8 @@ from basetest import BaseTest
 from katello.client.server import ServerRequestError
 
 from mangonel.activationkey import ActivationKey
+from mangonel.contentview import ContentView
+from mangonel.contentviewdefinition import ContentViewDefinition
 from mangonel.environment import Environment
 from mangonel.organization import Organization
 from mangonel.product import Product
@@ -25,6 +27,8 @@ class TestActivationKeys(BaseTest):
                        password=self.password)
         self.org_api = Organization()
         self.ak_api = ActivationKey()
+        self.cv_api = ContentView()
+        self.cvd_api = ContentViewDefinition()
         self.env_api = Environment()
         self.prd_api = Product()
         self.prv_api = Provider()
@@ -52,7 +56,15 @@ class TestActivationKeys(BaseTest):
         self.logger.debug("Created environemt %s" % env1['name'])
         self.assertEqual(env1, self.env_api.environment_by_name(org['label'], 'Dev'))
 
-        ak1 = self.ak_api.create(env1)
+        cvd = self.cvd_api.create(org, 'CVD1')
+        self.logger.debug("Created Content View Definition CVD1")
+
+        self.cvd_api.publish(org, cvd['id'], 'PublishedCVD1')
+        pcvd = self.cv_api.content_views_by_label_name_or_id(org, name='PublishedCVD1')
+        self.logger.debug("Published Content View PublishedCVD1")
+
+        library = self.env_api.environment_by_name(org['label'], 'Library')
+        ak1 = self.ak_api.create(library, cvId=pcvd['id'])
         self.logger.debug("Created activationkey %s" % ak1['name'])
         self.assertEqual(ak1, self.ak_api.activation_key(org, ak1['id']))
 
@@ -69,7 +81,16 @@ class TestActivationKeys(BaseTest):
         self.logger.debug("Created environemt %s" % env1['name'])
         self.assertEqual(env1, self.env_api.environment_by_name(org['label'], 'Dev'))
 
-        ak1 = self.ak_api.create(env1)
+        cvd = self.cvd_api.create(org, 'CVD1')
+        self.logger.debug("Created Content View Definition CVD1")
+
+        self.cvd_api.publish(org, cvd['id'], 'PublishedCVD1')
+        pcvd = self.cv_api.content_views_by_label_name_or_id(org, name='PublishedCVD1')
+        self.logger.debug("Published Content View PublishedCVD1")
+
+        library = self.env_api.environment_by_name(org['label'], 'Library')
+
+        ak1 = self.ak_api.create(library, cvId=pcvd['id'])
         self.logger.debug("Created activationkey %s" % ak1['name'])
         self.assertEqual(ak1, self.ak_api.activation_key(org, ak1['id']))
 
@@ -86,7 +107,16 @@ class TestActivationKeys(BaseTest):
         self.logger.debug("Created environemt %s" % env1['name'])
         self.assertEqual(env1, self.env_api.environment_by_name(org['label'], 'Dev'))
 
-        ak1 = self.ak_api.create(env1)
+        cvd = self.cvd_api.create(org, 'CVD1')
+        self.logger.debug("Created Content View Definition CVD1")
+
+        self.cvd_api.publish(org, cvd['id'], 'PublishedCVD1')
+        pcvd = self.cv_api.content_views_by_label_name_or_id(org, name='PublishedCVD1')
+        self.logger.debug("Published Content View PublishedCVD1")
+
+        library = self.env_api.environment_by_name(org['label'], 'Library')
+
+        ak1 = self.ak_api.create(library, cvId=pcvd['id'])
         self.logger.debug("Created activationkey %s" % ak1['name'])
         self.assertEqual(ak1, self.ak_api.activation_key(org, ak1['id']))
 
