@@ -44,9 +44,17 @@ class TestActivationKeys(BaseTest):
         self.ellapsed_time = time.time() - self.start_time
         self.logger.info("Test ellapsed time: %s" % self.ellapsed_time)
 
-
     def test_get_ak_1(self):
         "Tries to fetch an invalid activationkey."
+
+        org = self.org_api.create()
+        self.logger.debug("Created organization %s" % org['name'])
+        self.assertEqual(org, self.org_api.organization(org['name']), 'Failed to create and retrieve org.')
+
+        self.assertRaises(ServerRequestError, lambda: self.ak_api.activation_key(org, 10000))
+
+    def test_create_ak_1(self):
+        "Assures that a content view is passed during creation."
 
         org = self.org_api.create()
         self.logger.debug("Created organization %s" % org['name'])
@@ -56,21 +64,28 @@ class TestActivationKeys(BaseTest):
         self.logger.debug("Created environemt %s" % env1['name'])
         self.assertEqual(env1, self.env_api.environment_by_name(org['label'], 'Dev'))
 
-        cvd = self.cvd_api.create(org, 'CVD1')
-        self.logger.debug("Created Content View Definition CVD1")
+        self.assertRaises(ServerRequestError, lambda: self.ak_api.create(env1))
 
-        self.cvd_api.publish(org, cvd['id'], 'PublishedCVD1')
-        pcvd = self.cv_api.content_views_by_label_name_or_id(org, name='PublishedCVD1')
-        self.logger.debug("Published Content View PublishedCVD1")
+    def test_create_ak_2(self):
+        "Creates a new activationkey against default content view."
+
+        org = self.org_api.create()
+        self.logger.debug("Created organization %s" % org['name'])
+        self.assertEqual(org, self.org_api.organization(org['name']), 'Failed to create and retrieve org.')
+
+        env1 = self.env_api.create(org, 'Dev', 'Library')
+        self.logger.debug("Created environemt %s" % env1['name'])
+        self.assertEqual(env1, self.env_api.environment_by_name(org['label'], 'Dev'))
+
+        pcvd = self.cv_api.content_views_by_label_name_or_id(org, name='Default Organization View')
 
         library = self.env_api.environment_by_name(org['label'], 'Library')
+
         ak1 = self.ak_api.create(library, cvId=pcvd['id'])
         self.logger.debug("Created activationkey %s" % ak1['name'])
         self.assertEqual(ak1, self.ak_api.activation_key(org, ak1['id']))
 
-        self.assertRaises(ServerRequestError, lambda: self.ak_api.activation_key(org, 10000))
-
-    def test_create_ak_1(self):
+    def test_create_ak_3(self):
         "Creates a new activationkey with no content."
 
         org = self.org_api.create()
@@ -86,17 +101,13 @@ class TestActivationKeys(BaseTest):
 
         self.cvd_api.publish(org, cvd['id'], 'PublishedCVD1')
         pcvd = self.cv_api.content_views_by_label_name_or_id(org, name='PublishedCVD1')
-        self.logger.debug("Published Content View PublishedCVD1")
-
         library = self.env_api.environment_by_name(org['label'], 'Library')
 
         ak1 = self.ak_api.create(library, cvId=pcvd['id'])
         self.logger.debug("Created activationkey %s" % ak1['name'])
         self.assertEqual(ak1, self.ak_api.activation_key(org, ak1['id']))
 
-
-
-    def test_create_ak_2(self):
+    def test_create_ak_4(self):
         "Creates a new activationkey and adds a pool."
 
         org = self.org_api.create()
