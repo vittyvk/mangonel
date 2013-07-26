@@ -143,7 +143,7 @@ class TestOrganizations(BaseTest):
             " ",
             None,
             "label-invalid-%s" % generate_name(2),
-            generate_name(255),
+            generate_name(128),
             '_%s' % "label-invalid-%s" % generate_name(2),
             '%s_' % "label-invalid-%s" % generate_name(2),
             'label_%s' % "label-invalid-%s" % generate_name(2),
@@ -160,7 +160,7 @@ class TestOrganizations(BaseTest):
         org_labels = [
             " " + "label-invalid-%s" % generate_name(2),
             "label-invalid-%s" % generate_name(2) + " ",
-            generate_name(256),
+            generate_name(129),
             '<bold>%s</bold>' % "label-invalid-%s" % generate_name(2),
             ]
 
