@@ -56,7 +56,7 @@ class ContentViewDefinition(ContentViewDefinitionAPI):
 
         task = self.task_api.status(ptask['uuid'])
         while task['state'] != 'finished':
-            print "Publishing content view description %s" % name
+            logger.debug("Publishing content view description %s" % name)
             task = self.task_api.status(ptask['uuid'])
 
     def clone(self, org, cvdId, name=None, label=None, description=None):
