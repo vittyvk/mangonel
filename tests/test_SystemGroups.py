@@ -105,7 +105,6 @@ class TestSystemGroups(BaseTest):
 
         library = self.env_api.environment_by_name(org['label'], 'Library')
 
-        import epdb; epdb.st()
         sys1 = self.sys_api.create(org, library, view_id=pcvd['id'])
         self.logger.debug("Created system %s" % sys1['uuid'])
         self.assertEqual(sys1['uuid'], self.sys_api.system(sys1['uuid'])['uuid'])
