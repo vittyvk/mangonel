@@ -3,6 +3,7 @@
 # vim: ts=4 sw=4 expandtab ai
 
 import argparse
+import glob
 import os
 import subprocess
 import sys
@@ -12,16 +13,7 @@ import sys
 PROJECT_DIR = os.path.dirname(__file__)
 subprocess.call(['find', PROJECT_DIR, '-name', '*.pyc', '-delete'])
 
-PACKAGES = [
-        'activationkey_key',
-        'changeset',
-        'content_view_definition',
-        'user',
-        'organization',
-        'repo',
-        'system',
-        'system_group',
-        ]
+PACKAGES = [x.split('/')[-1][:-3] for x in glob.glob('../katello-cli/src/katello/client/api/*.py') if 'init' not in x]
 
 TESTS = [
     'test_ActivationKeys',
