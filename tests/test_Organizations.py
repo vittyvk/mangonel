@@ -166,3 +166,52 @@ class TestOrganizations(BaseTest):
 
         for label in org_labels:
             self.assertRaises(ServerRequestError, lambda: self.org_api.create(name=generate_name(3), label=label))
+
+    def test_update_org_description(self):
+        "Update the description for an organization."
+
+        org = self.org_api.create()
+        self.logger.debug("Created organization %s" % org['name'])
+        self.assertEqual(org, self.org_api.organization(org['label']))
+
+        description = "New description: %s" % generate_name()
+        self.org_api.update(org['label'], {'description': description})
+
+        updated = self.org_api.organization(org['label'])
+        self.assertEqual(description, updated['description'])
+        self.assertNotEqual(org['description'], updated['description'])
+
+    def test_fetch_all_organizations(self):
+        "Checks that total of organizations updates with addition/deletion."
+
+        before_tot = len(self.org_api.organizations())
+
+        # Add a new organization
+        org = self.org_api.create()
+        self.logger.debug("Created organization %s" % org['name'])
+        self.assertEqual(org, self.org_api.organization(org['label']))
+
+        self.assertEqual(before_tot + 1, len(self.org_api.organizations()))
+
+        # Now delete an organization
+        self.org_api.delete(org['label'])
+        self.assertEqual(before_tot, len(self.org_api.organizations()))
+
+    def test_download_uebercert(self):
+        "Downloads the uebercert for an organization."
+
+        org = self.org_api.create()
+        self.logger.debug("Created organization %s" % org['name'])
+        self.assertEqual(org, self.org_api.organization(org['label']))
+
+        uebercert = self.org_api.uebercert(org['label'])
+        #TODO: perform a check
+
+    def test_attach_all_systems(self):
+
+        org = self.org_api.create()
+        self.logger.debug("Created organization %s" % org['name'])
+        self.assertEqual(org, self.org_api.organization(org['label']))
+
+        task = self.org_api.attach_all_systems(org['label'])
+        #TODO: check that task finishes
