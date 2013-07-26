@@ -36,10 +36,10 @@ class Changeset(ChangesetAPI):
         return super(Changeset, self).add_content(chsId, contentType, {'content_view_id' : content['id'] })
 
     def apply(self, chsId):
-        applyTask = self.apply(chsId)
+        applyTask = super(Changeset, self).apply(chsId)
 
         task = self.task_api.status(applyTask['uuid'])
         while task['state'] != 'finished':
-            print "Promoting content..."
+            logger.debug("Promoting content...")
             task = self.task_api.status(applyTask['uuid'])
 

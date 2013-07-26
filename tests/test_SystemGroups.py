@@ -2,6 +2,8 @@ from basetest import BaseTest
 
 from katello.client.server import ServerRequestError
 
+from mangonel.contentview import ContentView
+from mangonel.contentviewdefinition import ContentViewDefinition
 from mangonel.environment import Environment
 from mangonel.organization import Organization
 from mangonel.system import System
@@ -22,6 +24,8 @@ class TestSystemGroups(BaseTest):
                        password=self.password,
                        port=self.port)
         self.org_api = Organization()
+        self.cv_api = ContentView()
+        self.cvd_api = ContentViewDefinition()
         self.env_api = Environment()
         self.sys_api = System()
         self.sys_grp_api = SystemGroup()
@@ -92,7 +96,17 @@ class TestSystemGroups(BaseTest):
         self.assertEqual(grp, self.sys_grp_api.system_group(org, grp['id']))
         self.logger.debug("Created system group '%s'" % grp['name'])
 
-        sys1 = self.sys_api.create(org, env)
+        cvd = self.cvd_api.create(org, 'CVD1')
+        self.logger.debug("Created Content View Definition CVD1")
+
+        self.cvd_api.publish(org, cvd['id'], 'PublishedCVD1')
+        pcvd = self.cv_api.content_views_by_label_name_or_id(org, name='PublishedCVD1')
+        self.logger.debug("Published Content View PublishedCVD1")
+
+        library = self.env_api.environment_by_name(org['label'], 'Library')
+
+        import epdb; epdb.st()
+        sys1 = self.sys_api.create(org, library, view_id=pcvd['id'])
         self.logger.debug("Created system %s" % sys1['uuid'])
         self.assertEqual(sys1['uuid'], self.sys_api.system(sys1['uuid'])['uuid'])
 
