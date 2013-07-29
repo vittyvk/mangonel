@@ -30,7 +30,7 @@ parser.add_option('-u', '--username', type=str, dest='username', default='admin'
 parser.add_option('-p', '--password', type=str, dest='password', default='admin', help='Valid system user password')
 parser.add_option('--project', type=str, dest='project', default='/katello', help='Project can be either "katello" or "headpin"')
 parser.add_option('--port', type=str, dest='port', default='443', help='Server port, defaults to 443')
-parser.add_option('--katello-src', type=str, dest='src', default='ls -l /usr/lib/python2.6/site-packages/katello/client/api', help='Location for Katello\'s source code.')
+parser.add_option('--katello-src', type=str, dest='src', default='/usr/lib/python2.6/site-packages/katello/client/api', help='Location for Katello\'s source code.')
 
 (options, ignored_options) = parser.parse_args()
 
