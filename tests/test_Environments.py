@@ -101,6 +101,18 @@ class TestEnvironments(BaseTest):
 
         self.assertRaises(ServerRequestError, lambda: self.env_api.create(org, 'Dev', 'Library', label='Library'))
 
+    def test_library_by_org(self):
+        "Fetches library environment by organization."
+
+        org = self._create_org()
+
+        env = self.env_api.library_by_org(org['label'])
+        self.assertTrue(env['library'])
+
+        # Delete Library environment
+        self.env_api.delete(org['label'], env['id'])
+        self.assertEqual(None, self.env_api.library_by_org(org['label']))
+
     def test_environments_by_org(self):
         "Fetches all environments for organization"
 
@@ -141,6 +153,16 @@ class TestEnvironments(BaseTest):
         self.assertEqual("Library", env['prior'])
 
     def test_environment_by_org(self):
+        "Fetches environment from organization."
+
+        org1 = self._create_org()
+
+        env = self.env_api.create(org1, 'Dev', 'Library')
+        self.logger.debug("Created environemt %s" % env['name'])
+        self.assertEqual(env, self.env_api.environment_by_org(org1['label'], env['id']))
+        self.assertEqual("Library", env['prior'])
+
+    def test_environments_by_org(self):
         "Fetches environment by organization."
 
         org1 = self._create_org()
