@@ -14,7 +14,7 @@ class Environment(EnvironmentAPI):
     def __init__(self):
         super(Environment, self).__init__()
 
-    def create(self, org, name=None, prior='Library'):
+    def create(self, org, name=None, prior='Library', label=None, description=None):
 
         if name is None:
             name = generate_name()
@@ -22,8 +22,5 @@ class Environment(EnvironmentAPI):
         if prior:
             prior = self.environment_by_name(org['label'], prior)
             prior_id = prior['id']
-
-        label = "label-%s" % name.replace(' ', '_')
-        description = "Generated automatically."
 
         return super(Environment, self).create(org['label'], name, label, description, prior_id)
