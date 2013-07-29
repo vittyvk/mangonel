@@ -56,7 +56,7 @@ OK
 Running multiple test suites from the command line:
 
 ```bash
-$ python mangonel_runner -s my.katello.com -u admin -p admin -t tests.test_Organizations tests.test_ActivationKeys --verbose 3
+$ python mangonel_runner -s my.katello.com -u admin -p admin -t tests.test_Organizations -t tests.test_ActivationKeys --verbose 3
 .
 .
 .
@@ -73,7 +73,7 @@ OK
 Running individual tests from a test suite from the command line:
 
 ```bash
-$ python mangonel_runner -s my.katello.com -u admin -p admin -t tests.test_Organizations.TestOrganizations.test_create_org1 tests.test_Organizations.TestOrganizations.test_create_org2 --verbose 4
+$ python mangonel_runner -s my.katello.com -u admin -p admin -t tests.test_Organizations.TestOrganizations.test_create_org1 -t tests.test_Organizations.TestOrganizations.test_create_org2 --verbose 4
 .
 .
 ----------------------------------------------------------------------
