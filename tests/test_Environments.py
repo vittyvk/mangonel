@@ -87,6 +87,17 @@ class TestEnvironments(BaseTest):
         self.env_api.delete(org['label'], env['id'])
         self.assertEqual(None, self.env_api.environment_by_name(org['label'], 'Dev'))
 
+    def test_delete_env_2(self):
+        "Cannot delete the Library environment."
+
+        org = self._create_org()
+
+        env = self.env_api.library_by_org(org['label'])
+        self.assertTrue(env['library'])
+
+        # Delete Library environment
+        self.assertRaises(ServerRequestError, lambda: self.env_api.delete(org['label'], env['id']))
+
     def test_library_not_allowed_1(self):
         "Library is not an allowed environment name."
 
@@ -108,10 +119,6 @@ class TestEnvironments(BaseTest):
 
         env = self.env_api.library_by_org(org['label'])
         self.assertTrue(env['library'])
-
-        # Delete Library environment
-        self.env_api.delete(org['label'], env['id'])
-        self.assertEqual(None, self.env_api.library_by_org(org['label']))
 
     def test_environments_by_org(self):
         "Fetches all environments for organization"
