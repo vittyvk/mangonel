@@ -67,7 +67,7 @@ class TestUsers(BaseTest):
             " " + "user-%s" % generate_name(4),
             "user-%s" % generate_name(4) + " ",
             generate_name(2,2),
-            generate_name(256),
+            generate_name(129),
             ]
 
         for name in names:
@@ -77,7 +77,7 @@ class TestUsers(BaseTest):
         "Success username"
 
         names = [
-            generate_name(255),
+            generate_name(128),
             "user-%s" % generate_name(4),
             "user.%s" % generate_name(2),
             "user-%s@example.com" % generate_name(4),
