@@ -31,6 +31,7 @@ parser.add_option('-u', '--username', type=str, dest='username', default='admin'
 parser.add_option('-p', '--password', type=str, dest='password', default='admin', help='Valid system user password')
 parser.add_option('--project', type=str, dest='project', default='/katello', help='Project can be either "katello" or "headpin"')
 parser.add_option('--port', type=str, dest='port', default='443', help='Server port, defaults to 443')
+parser.add_option('--verbose', type='choice',  choices=['1', '2', '3', '4', '5'], default=2, help='Debug verbosity level')
 parser.add_option('--katello-src', type=str, dest='src', default='/usr/lib/python2.6/site-packages/katello/client/api', help='Location for Katello\'s source code.')
 
 (options, ignored_options) = parser.parse_args()
@@ -40,6 +41,7 @@ os.environ['KATELLO_USERNAME'] = options.username
 os.environ['KATELLO_PASSWORD'] = options.password
 os.environ['PROJECT'] = options.project
 os.environ['KATELLO_PORT'] = options.port
+os.environ['VERBOSITY'] = options.verbose
 
 PACKAGES = [x.split('/')[-1][:-3] for x in glob.glob("%s/*.py" % options.src) if 'init' not in x]
 
@@ -47,6 +49,7 @@ env = os.environ.copy()
 
 params = [
         'nosetests',
+        '--verbose',
         '--with-xunit',
         '--with-coverage',
         '--cover-html',

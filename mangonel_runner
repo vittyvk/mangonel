@@ -27,7 +27,7 @@ if __name__ == "__main__":
     (options, ignored_options) = parser.parse_args()
 
     # Validation
-    if options.host is None or options.username is None or options.password is None:
+    if options.host is None:
         parser.print_usage()
         sys.exit(-1)
     else:
