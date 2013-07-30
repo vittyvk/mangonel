@@ -121,11 +121,13 @@ class TestSystemGroups(BaseTest):
         "Creates system group and adds a system to it."
         (org, env) = self._create_org_env()
 
+        library = self.env_api.environment_by_name(org['label'], 'Library')
+
         grp = self.sys_grp_api.create(org)
         self.assertEqual(grp, self.sys_grp_api.system_group(org, grp['id']))
         self.logger.debug("Created system group '%s'" % grp['name'])
 
-        sys1 = self.sys_api.create(org, env)
+        sys1 = self.sys_api.create(org, library)
         self.logger.debug("Created system %s" % sys1['uuid'])
         self.assertEqual(sys1['uuid'], self.sys_api.system(sys1['uuid'])['uuid'])
         self.assertEqual(len(self.sys_grp_api.system_group_systems(org, grp['id'])), 0)
@@ -144,11 +146,13 @@ class TestSystemGroups(BaseTest):
         "Creates system group, adds a system to it and copies it."
         (org, env) = self._create_org_env()
 
+        library = self.env_api.environment_by_name(org['label'], 'Library')
+
         grp1 = self.sys_grp_api.create(org)
         self.assertEqual(grp1, self.sys_grp_api.system_group(org, grp1['id']))
         self.logger.debug("Created system group '%s'" % grp1['name'])
 
-        sys1 = self.sys_api.create(org, env)
+        sys1 = self.sys_api.create(org, library)
         self.logger.debug("Created system %s" % sys1['uuid'])
         self.assertEqual(sys1['uuid'], self.sys_api.system(sys1['uuid'])['uuid'])
 
