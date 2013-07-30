@@ -22,8 +22,8 @@ class ContentView(ContentViewAPI):
     def delete(self, org, cvId):
         return super(ContentView, self).delete(org['label'], cvId)
 
-    def content_view(self, org, cvId, env):
-        return super(ContentView, self).show(org['label'], cvId, env['id'])
+    def content_view(self, org, cvId, envId=None):
+        return super(ContentView, self).show(org['label'], cvId, envId)
 
     def content_views_by_org(self, org, env=None):
         return super(ContentView, self).content_views_by_org(org['label'], env)

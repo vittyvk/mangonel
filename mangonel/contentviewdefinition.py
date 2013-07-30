@@ -24,7 +24,6 @@ class ContentViewDefinition(ContentViewDefinitionAPI):
         if name is None:
             name = generate_name(8)
 
-
         if label is None:
             label = "label-%s" % name.lower()
 
