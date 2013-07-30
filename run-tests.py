@@ -17,6 +17,8 @@ subprocess.call(['find', PROJECT_DIR, '-name', '*.pyc', '-delete'])
 
 TESTS = [
     'test_ActivationKeys',
+    'test_ContentViews',
+    'test_ContentViewDefinitions',
     'test_Environments',
     'test_Organizations',
     'test_SystemGroups',
