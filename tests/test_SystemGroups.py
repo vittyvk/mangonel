@@ -2,42 +2,7 @@ from basetest import BaseTest
 
 from katello.client.server import ServerRequestError
 
-from mangonel.contentview import ContentView
-from mangonel.contentviewdefinition import ContentViewDefinition
-from mangonel.environment import Environment
-from mangonel.organization import Organization
-from mangonel.system import System
-from mangonel.systemgroup import SystemGroup
-from mangonel.server import Server
-
-import time
-import unittest
-
 class TestSystemGroups(BaseTest):
-
-    def setUp(self):
-        BaseTest.setUp(self)
-
-        self.server = Server(host=self.host,
-                       project=self.project,
-                       username=self.user,
-                       password=self.password,
-                       port=self.port)
-        self.org_api = Organization()
-        self.cv_api = ContentView()
-        self.cvd_api = ContentViewDefinition()
-        self.env_api = Environment()
-        self.sys_api = System()
-        self.sys_grp_api = SystemGroup()
-
-        self.start_time = time.time()
-
-
-    def tearDown(self):
-        self.server = None
-
-        self.ellapsed_time = time.time() - self.start_time
-        self.logger.info("Test ellapsed time: %s" % self.ellapsed_time)
 
     def _create_org_env(self):
         "Generic method to create a new organization and one environment"
