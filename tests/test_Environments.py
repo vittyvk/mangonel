@@ -253,7 +253,7 @@ class TestEnvironments(BaseTest):
 
         names = [
             generate_name(2, 2),
-            generate_name(128),
+            generate_name(255),
             "env-%s" % generate_name(4),
             "env.%s" % generate_name(2),
             "env-%s@example.com" % generate_name(4),
@@ -272,6 +272,7 @@ class TestEnvironments(BaseTest):
 
         for name in names:
 
+            self.logger.debug(name)
             env = self.env_api.create(org, name=name)
             self.assertEqual(env, self.env_api.environment_by_name(org['label'], name))
 
@@ -282,10 +283,12 @@ class TestEnvironments(BaseTest):
                 " ",
                 " " + "env-%s" % generate_name(4),
                 "env-%s" % generate_name(4) + " ",
-                generate_name(129),
+                generate_name(256),
                 ]
 
         org = self._create_org()
 
         for name in names:
+
+            self.logger.debug(name)
             self.assertRaises(ServerRequestError, lambda: self.env_api.create(org, name=name))
