@@ -1,15 +1,7 @@
 from basetest import BaseTest
 
 from katello.client.server import ServerRequestError
-
-from mangonel.environment import Environment
-from mangonel.organization import Organization
-from mangonel.system import System
-from mangonel.server import Server
-
-import time
-import unittest
-import argparse
+from optparse import OptionParser
 import csv
 
 
@@ -18,29 +10,13 @@ class TestCSVPopulate(BaseTest):
     def setUp(self):
         BaseTest.setUp(self)
 
-        self.server = Server(host=self.host,
-                       project=self.project,
-                       username=self.user,
-                       password=self.password,
-                       port=self.port)
-        self.org_api = Organization()
-        self.env_api = Environment()
-        self.sys_api = System()
-
         # Include the main options here so test suites may add their own
-        parser = argparse.ArgumentParser()
-        parser.add_argument('-dorg', '--org-csv', type=str, dest='org_csv')
-        parser.add_argument('-dsys', '--sys-csv', type=str, dest='sys_csv')
-        [self.args, ignored_args] = parser.parse_known_args()
+        parser = OptionParser()
+        parser.add_option('-dorg', '--org-csv', type=str, dest='org_csv')
+        parser.add_option('-dsys', '--sys-csv', type=str, dest='sys_csv')
+        (self.args, ignored_args) = parser.parse_args()
 
         self.start_time = time.time()
-
-
-    def tearDown(self):
-        self.server = None
-
-        self.ellapsed_time = time.time() - self.start_time
-        self.logger.info("Test ellapsed time: %s" % self.ellapsed_time)
 
 
     def namify(self, name, row):
