@@ -49,8 +49,8 @@ class SystemGroup(SystemGroupAPI):
         return super(SystemGroup, self).copy(org['label'], system_group_id, new_name, description, max_systems)
 
 
-    def update(self, org, system_group_id, name=None, description=None, max_systems=-1):
-        return super(SystemGroup, self).delete(org['label'], )
+    def update(self, org, system_group_id, name=None, description=None, max_systems=None):
+        return super(SystemGroup, self).update(org['label'], system_group_id, name, description, max_systems)
 
 
     def delete(self, org, system_group_id, delete_systems=False):

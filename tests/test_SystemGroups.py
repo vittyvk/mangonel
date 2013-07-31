@@ -1,6 +1,11 @@
+#!/usr/bin/env python
+# -*- encoding: utf-8 -*-
+# vim: ts=4 sw=4 expandtab ai
+
 from basetest import BaseTest
 
 from katello.client.server import ServerRequestError
+from mangonel.common import generate_name
 
 class TestSystemGroups(BaseTest):
 
@@ -17,6 +22,56 @@ class TestSystemGroups(BaseTest):
 
         return (org, env)
 
+    def test_valid_names(self):
+        "Valid names for system groups."
+
+        (org, env) = self._create_org_env()
+
+        names = [
+            generate_name(1,1),
+            generate_name(255),
+            "%s-%s" % (generate_name(4), generate_name(4)),
+            "%s.%s" % (generate_name(4), generate_name(4)),
+            u"նոր օգտվող-%s" % generate_name(2),
+            u"新用戶-%s" % generate_name(2),
+            u"नए उपयोगकर्ता-%s" % generate_name(2),
+            u"нового пользователя-%s" % generate_name(2),
+            u"uusi käyttäjä-%s" % generate_name(2),
+            u"νέος χρήστης-%s" % generate_name(2),
+            "foo@!#$^&*( ) %s" % generate_name(),
+            "<blink>%s</blink>" % generate_name(),
+            "bar+{}|\"?hi %s" % generate_name(),
+            ]
+
+        for name in names:
+            grp = self.sys_grp_api.create(org, name=name)
+            self.assertEqual(grp, self.sys_grp_api.system_group(org, grp['id']))
+
+    def test_invalid_names(self):
+        "Invalid names for system groups."
+
+        (org, env) = self._create_org_env()
+
+        names = [
+            " ",
+            generate_name(256),
+            " " + generate_name(),
+            generate_name() + " ",
+            ]
+
+        for name in names:
+            self.assertRaises(ServerRequestError, lambda: self.sys_grp_api.create(org, name=name))
+
+    def test_invalid_max_systems(self):
+        "Invalid number of max system."
+
+        (org, env) = self._create_org_env()
+
+        self.assertRaises(ServerRequestError, lambda: self.sys_grp_api.create(org, max_systems=0))
+        self.assertRaises(ServerRequestError, lambda: self.sys_grp_api.create(org, max_systems=-2))
+        self.assertRaises(ServerRequestError, lambda: self.sys_grp_api.create(org, max_systems=""))
+        self.assertRaises(ServerRequestError, lambda: self.sys_grp_api.create(org, max_systems=" "))
+
     def test_create_group_1(self):
         "Creates an empty system group."
 
@@ -25,6 +80,26 @@ class TestSystemGroups(BaseTest):
         grp = self.sys_grp_api.create(org)
         self.assertEqual(grp, self.sys_grp_api.system_group(org, grp['id']))
         self.logger.debug("Created system group '%s'" % grp['name'])
+
+    def test_update_group_1(self):
+        "Updates system group."
+
+        (org, env) = self._create_org_env()
+
+        grp = self.sys_grp_api.create(org)
+        self.assertEqual(grp, self.sys_grp_api.system_group(org, grp['id']))
+        self.logger.debug("Created system group '%s'" % grp['name'])
+
+        new_name = generate_name()
+        self.sys_grp_api.update(org, grp['id'], new_name, None, None)
+        self.assertEqual(new_name, self.sys_grp_api.system_group(org, grp['id'])['name'])
+
+        new_description = generate_name(255)
+        self.sys_grp_api.update(org, grp['id'], None, new_description, None)
+        self.assertEqual(new_description, self.sys_grp_api.system_group(org, grp['id'])['description'])
+
+        self.sys_grp_api.update(org, grp['id'], None, None, 10)
+        self.assertEqual(10, self.sys_grp_api.system_group(org, grp['id'])['max_systems'])
 
     def test_create_and_delete_system_group_1(self):
         "Creates an empty system group and deletes it."
@@ -51,7 +126,6 @@ class TestSystemGroups(BaseTest):
         self.assertEqual(grp2, self.sys_grp_api.system_group(org, grp2['id']))
         self.logger.debug("Created system group '%s'" % grp2['name'])
         self.assertEqual(len(self.sys_grp_api.system_groups(org)), 2)
-
 
     def test_create_group_with_system_1(self):
         "Creates system group and adds a system to it."
@@ -81,7 +155,6 @@ class TestSystemGroups(BaseTest):
         self.assertEqual(len(self.sys_grp_api.system_group_systems(org, grp['id'])), 1)
         self.logger.debug("System group '%s' is not empty" % grp['name'])
 
-
     def test_create_group_with_system_and_delete_1(self):
         "Creates system group and adds a system to it."
         (org, env) = self._create_org_env()
@@ -106,6 +179,30 @@ class TestSystemGroups(BaseTest):
         self.assertEqual(len(self.sys_grp_api.system_group_systems(org, grp['id'])), 0)
         self.logger.debug("System group '%s' is empty" % grp['name'])
 
+
+    def test_create_group_with_system_and_delete_2(self):
+        "Creates system group and adds a system to it, then deletes both."
+        (org, env) = self._create_org_env()
+
+        library = self.env_api.environment_by_name(org['label'], 'Library')
+
+        grp = self.sys_grp_api.create(org)
+        self.assertEqual(grp, self.sys_grp_api.system_group(org, grp['id']))
+        self.logger.debug("Created system group '%s'" % grp['name'])
+
+        sys1 = self.sys_api.create(org, library)
+        self.logger.debug("Created system %s" % sys1['uuid'])
+        self.assertEqual(sys1['uuid'], self.sys_api.system(sys1['uuid'])['uuid'])
+        self.assertEqual(len(self.sys_grp_api.system_group_systems(org, grp['id'])), 0)
+        self.logger.debug("System group '%s' is empty" % grp['name'])
+
+        self.sys_grp_api.add_systems(org, grp['id'], [sys1['uuid'],])
+        self.assertEqual(len(self.sys_grp_api.system_group_systems(org, grp['id'])), 1)
+        self.logger.debug("System group '%s' is not empty" % grp['name'])
+
+        self.sys_grp_api.delete(org, grp['id'], True)
+        self.assertRaises(ServerRequestError, lambda: self.sys_grp_api.system_group(org, grp['id']))
+        self.assertRaises(ServerRequestError, lambda: self.sys_api.system(sys1['uuid'])['uuid'])
 
     def test_create_group_with_system_and_copy_1(self):
         "Creates system group, adds a system to it and copies it."
