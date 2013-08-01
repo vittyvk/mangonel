@@ -73,7 +73,7 @@ def generate_name(min=4, max=8):
     return "%s" % str().join(r.choice(pool1) for x in range(random.randint(min, max)))
 
 VALID_NAMES = [
-    generate_name(1,1),
+    generate_name(5,5),
     generate_name(255),
     "%s-%s" % (generate_name(4), generate_name(4)),
     "%s.%s" % (generate_name(4), generate_name(4)),
