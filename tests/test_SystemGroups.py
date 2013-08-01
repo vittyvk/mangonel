@@ -6,6 +6,8 @@ from basetest import BaseTest
 
 from katello.client.server import ServerRequestError
 from mangonel.common import generate_name
+from mangonel.common import VALID_NAMES
+from mangonel.common import INVALID_NAMES
 
 class TestSystemGroups(BaseTest):
 
@@ -27,23 +29,7 @@ class TestSystemGroups(BaseTest):
 
         (org, env) = self._create_org_env()
 
-        names = [
-            generate_name(1,1),
-            generate_name(255),
-            "%s-%s" % (generate_name(4), generate_name(4)),
-            "%s.%s" % (generate_name(4), generate_name(4)),
-            u"նոր օգտվող-%s" % generate_name(2),
-            u"新用戶-%s" % generate_name(2),
-            u"नए उपयोगकर्ता-%s" % generate_name(2),
-            u"нового пользователя-%s" % generate_name(2),
-            u"uusi käyttäjä-%s" % generate_name(2),
-            u"νέος χρήστης-%s" % generate_name(2),
-            "foo@!#$^&*( ) %s" % generate_name(),
-            "<blink>%s</blink>" % generate_name(),
-            "bar+{}|\"?hi %s" % generate_name(),
-            ]
-
-        for name in names:
+        for name in VALID_NAMES:
             grp = self.sys_grp_api.create(org, name=name)
             self.assertEqual(grp, self.sys_grp_api.system_group(org, grp['id']))
 
@@ -52,14 +38,7 @@ class TestSystemGroups(BaseTest):
 
         (org, env) = self._create_org_env()
 
-        names = [
-            " ",
-            generate_name(256),
-            " " + generate_name(),
-            generate_name() + " ",
-            ]
-
-        for name in names:
+        for name in INVALID_NAMES:
             self.assertRaises(ServerRequestError, lambda: self.sys_grp_api.create(org, name=name))
 
     def test_invalid_max_systems(self):
@@ -112,7 +91,19 @@ class TestSystemGroups(BaseTest):
 
         self.sys_grp_api.delete(org, grp['id'])
         self.assertRaises(ServerRequestError, lambda: self.sys_grp_api.system_group(org, grp['id']))
-        self.logger.debug("Deleted system group '%s'" % grp['name'])
+
+    def test_create_and_delete_system_group_2(self):
+        "Deletes system groups with valid names."
+
+        (org, env) = self._create_org_env()
+
+        for name in VALID_NAMES:
+            grp = self.sys_grp_api.create(org, name=name)
+            self.assertEqual(grp, self.sys_grp_api.system_group(org, grp['id']))
+            self.logger.debug("Created system group '%s'" % grp['name'])
+
+            self.sys_grp_api.delete(org, grp['id'])
+            self.assertRaises(ServerRequestError, lambda: self.sys_grp_api.system_group(org, grp['id']))
 
     def test_create_and_copy_system_group_1(self):
         "Creates system group and copies it."

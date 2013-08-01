@@ -5,6 +5,8 @@ from basetest import BaseTest
 
 from katello.client.server import ServerRequestError
 from mangonel.common import generate_name
+from mangonel.common import VALID_NAMES
+from mangonel.common import INVALID_NAMES
 
 class TestOrganizations(BaseTest):
 
@@ -14,7 +16,6 @@ class TestOrganizations(BaseTest):
         org = self.org_api.create()
         self.logger.debug("Created organization %s" % org['name'])
         self.assertEqual(org, self.org_api.organization(org['name']), 'Failed to create and retrieve org.')
-
 
     def test_create_org2(self):
         "Creates a new organization and then deletes it."
@@ -26,7 +27,6 @@ class TestOrganizations(BaseTest):
         self.logger.info("Deleting organization %s" % org['name'])
         self.org_api.delete(org['name'])
         self.assertRaises(ServerRequestError, lambda: self.org_api.organization(org['name']))
-
 
     def test_create_org3(self):
         "Creates a new organization with an initial environment."
@@ -68,43 +68,28 @@ class TestOrganizations(BaseTest):
         self.assertRaises(ServerRequestError, lambda: self.org_api.create(name=org['name'], label=generate_name()))
         self.assertRaises(ServerRequestError, lambda: self.org_api.create(name=generate_name(), label=org['label']))
 
+    def test_delete_org_1(self):
+        "Delete organizations with valid names."
+
+        for name in VALID_NAMES:
+           org = self.org_api.create(name=name)
+           self.logger.debug("Created organization %s" % org['name'])
+           self.assertEqual(org, self.org_api.organization(org['name']), 'Failed to create and retrieve org.')
+
+           self.logger.info("Deleting organization %s" % org['name'])
+           self.org_api.delete(org['name'])
+           self.assertRaises(ServerRequestError, lambda: self.org_api.organization(org['name']))
+
     def test_invalid_org_names(self):
         "These organization names are not valid."
 
-        orgname = "org-invalid-%s" % generate_name(2)
-
-        org_names = [
-            " ",
-            " " + generate_name(2),
-            generate_name(2) + " ",
-            generate_name(256),
-            ]
-
-        for name in org_names:
+        for name in INVALID_NAMES:
             self.assertRaises(ServerRequestError, lambda: self.org_api.create(name=name, label="label-%s" % generate_name(2)))
 
     def test_valid_org_names(self):
         "These organization names are valid."
 
-        org_names = [
-            "org-valid-%s" % generate_name(2),
-            "org-valid.%s" % generate_name(2),
-            "org-valid-%s@example.com" % generate_name(2),
-            u"նոր օգտվող-%s" % generate_name(2),
-            u"新用戶-%s" % generate_name(2),
-            u"नए उपयोगकर्ता-%s" % generate_name(2),
-            u"нового пользователя-%s" % generate_name(2),
-            u"uusi käyttäjä-%s" % generate_name(2),
-            u"νέος χρήστης-%s" % generate_name(2),
-            generate_name(1,1),
-            generate_name(255),
-            "foo@!#$^&*( ) %s" % generate_name(),
-            "<blink>%s</blink>" % generate_name(),
-            "bar+{}|\"?hi %s" % generate_name(),
-
-            ]
-
-        for name in org_names:
+        for name in VALID_NAMES:
             org = self.org_api.create(name=name, label="label-%s" % generate_name(2))
             self.logger.debug("Created organization %s" % org['name'])
             self.assertEqual(org, self.org_api.organization(org['label']))
