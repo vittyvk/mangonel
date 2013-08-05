@@ -1,8 +1,9 @@
 from basetest import BaseTest
 
 from katello.client.server import ServerRequestError
-from optparse import OptionParser
+from mangonel.mangoneloptparse import MangonelOptionParser
 import csv
+import time
 
 
 class TestCSVPopulate(BaseTest):
@@ -11,9 +12,9 @@ class TestCSVPopulate(BaseTest):
         BaseTest.setUp(self)
 
         # Include the main options here so test suites may add their own
-        parser = OptionParser()
-        parser.add_option('-dorg', '--org-csv', type=str, dest='org_csv')
-        parser.add_option('-dsys', '--sys-csv', type=str, dest='sys_csv')
+        parser = MangonelOptionParser()
+        parser.add_option('--org-csv', type=str, dest='org_csv')
+        parser.add_option('--sys-csv', type=str, dest='sys_csv')
         (self.args, ignored_args) = parser.parse_args()
 
         self.start_time = time.time()

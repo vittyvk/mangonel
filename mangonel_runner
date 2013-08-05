@@ -4,7 +4,8 @@ import os
 import sys
 import unittest
 
-from optparse import OptionParser
+from mangonel.mangoneloptparse import MangonelOptionParser
+
 
 # katello-cli requires kerberos module
 try:
@@ -20,7 +21,7 @@ if __name__ == "__main__":
     epilog = "Constructive comments and feedback can be sent to Og Maciel <omaciel at ogmaciel dot com>."
     version = "%(prog)s 0.1"
 
-    parser = OptionParser(prog=prog, usage=usage, description=description, epilog=epilog, version=version)
+    parser = MangonelOptionParser(prog=prog, usage=usage, description=description, epilog=epilog, version=version)
 
     parser.add_option('-s', '--host', type=str, dest='host', help='Server url')
     parser.add_option('-u', '--username', type=str, dest='username', default='admin', help='Valid system username')
